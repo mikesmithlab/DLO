@@ -2,8 +2,22 @@ import win32com.client as win32
 import datetime
 import pathlib
 
-def scan_todays_email(email_address='/O=EXCHANGELABS/OU=EXCHANGE ADMINISTRATIVE GROUP (FYDIBOHF23SPDLT)/CN=RECIPIENTS/CN=99114A96025D4D768FB7BF3BC9DB1D36-SS-ASSESS-S',
-                    filepath = 'C:\\Users\\ppzmis\\OneDrive - The University of Nottingham\\Documents\\DLO\\Extensions_to_approve\\'):
+approve_email = {
+        'subject' : 'course work extension approved',
+        'body' : 'approved',
+        'to' : 'mike.i.smith@nottingham.ac.uk',
+        }
+
+manual_email = {
+        'subject' : 'You have manual extensions to process',
+        'body' : '',
+        'to' : 'mike.i.smith@nottingham.ac.uk',
+        }
+
+
+
+def scan_recent_email(email_address='/O=EXCHANGELABS/OU=EXCHANGE ADMINISTRATIVE GROUP (FYDIBOHF23SPDLT)/CN=RECIPIENTS/CN=99114A96025D4D768FB7BF3BC9DB1D36-SS-ASSESS-S',
+                    filepath = 'C:/Users/ppzmis/OneDrive - The University of Nottingham/Documents/DLO/Extensions_to_approve/'):
 
     outlook = win32.Dispatch("Outlook.Application").GetNamespace("MAPI")
     inbox = outlook.GetDefaultFolder(6)
@@ -12,7 +26,7 @@ def scan_todays_email(email_address='/O=EXCHANGELABS/OU=EXCHANGE ADMINISTRATIVE 
 
 
     #Filter email
-    start_time = str(datetime.datetime.now().replace(hour=0,minute=0,second=0).strftime("%Y-%d-%m %H:%M %p"))
+    start_time = str((datetime.datetime.now().replace(hour=0,minute=0,second=0)-datetime.timedelta(days=7)).strftime("%Y-%d-%m %H:%M %p"))
     stop_time = str(datetime.datetime.now().replace(hour=23,minute=59,second=59).strftime("%Y-%d-%m %H:%M %p"))
     messages = messages.Restrict("[ReceivedTime] >= '" + start_time + "' And [ReceivedTime] <= '" + stop_time + "'")
     messages = messages.Restrict("[SenderEmailAddress] = '{}'".format(email_address))
@@ -34,16 +48,26 @@ def scan_todays_email(email_address='/O=EXCHANGELABS/OU=EXCHANGE ADMINISTRATIVE 
 
 
 
-def send_email(attachment, email_dictionary, filepath = 'C:\\Users\\ppzmis\\OneDrive - The University of Nottingham\\Documents\\DLO\\Approved_extensions\\'):
-
+def send_email(msg, attachments=None, filepath = 'C:/Users/ppzmis/OneDrive - The University of Nottingham/Documents/DLO/Approved_extensions/'):
+    """
     #Only works from local email client
+
+    msg is a dictionary of the info for email
+    attachments should be a list of filenames.
+
+    """
+
     outlook = win32.Dispatch('outlook.application')
     mail = outlook.CreateItem(0)
-    mail.To = email['to']
-    mail.Subject = email['subject']
-    mail.Body = email['body']
-    #mail.HTMLBody = '<h2>HTML Message body</h2>' #this field is optional
-    mail.Attachments.Add(filepath + attachment)
+    mail.To = msg['to']
+    mail.Subject = msg['subject']
+    mail.Body = msg['body']
+    if 'html_body' in msg.keys():
+        mail.HTMLBody = msg['html_body']
+
+    if attachments is not None:
+        for attachment in attachments:
+            mail.Attachments.Add(attachment)
 
     mail.Send()
 
@@ -51,11 +75,7 @@ def send_email(attachment, email_dictionary, filepath = 'C:\\Users\\ppzmis\\OneD
 if __name__ =='__main__':
     filename = 'test.docx'
 
-    email = {
-        'subject' : 'course work extension approved',
-        'body' : 'approved',
-        'to' : 'mike.i.smith@nottingham.ac.uk',
-        }
+
 
 
     scan_todays_email()
