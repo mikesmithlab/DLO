@@ -7,11 +7,6 @@ import uuid
 import os
 from filehandling import BatchProcess
 
-
-
-
-
-
 def parse_date(datestring):
     return dateutil.parser.parse(datestring, dayfirst=True)
 
@@ -22,7 +17,6 @@ def process_extension():
     for filename in BatchProcess('C:/Users/ppzmis/OneDrive - The University of Nottingham/Documents/DLO/Extensions_to_approve/*.*'):
         if process(filename=filename):
             not_processed = True
-
     return not_processed
 
 def process(filename):
