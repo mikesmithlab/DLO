@@ -1,7 +1,9 @@
 import win32com.client as win32
 import datetime
 import pathlib
-import os
+
+
+from addresses import DLO_DIR, SS_SERVICES
 
 approve_email = {
         'subject' : 'course work extension approved',
@@ -15,9 +17,17 @@ manual_email = {
         'to' : 'mike.i.smith@nottingham.ac.uk',
         }
 
-SS_SERVICES = '/O=EXCHANGELABS/OU=EXCHANGE ADMINISTRATIVE GROUP (FYDIBOHF23SPDLT)/CN=RECIPIENTS/CN=99114A96025D4D768FB7BF3BC9DB1D36-SS-ASSESS-S'
-DLO_DIR = os.environ['USERPROFILE'] + '/OneDrive - The University of Nottingham/Documents/DLO/'
-print(DLO_DIR)
+"""
+disregard_element_email = {
+    'subject' : 'Concern about your tutee',
+    'body' : '',
+    'to' : '',
+    'cc : 'frazer.pearce@nottingham.ac.uk; kim
+}
+"""
+
+
+
 
 def scan_recent_email(email_address=SS_SERVICES,
                     filepath = DLO_DIR + 'Extensions_to_approve/'):

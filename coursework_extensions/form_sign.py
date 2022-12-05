@@ -5,7 +5,11 @@ import pathlib
 import shutil
 import uuid
 import os
+
 from filehandling import BatchProcess
+
+from addresses import DLO_DIR
+
 
 def parse_date(datestring):
     return dateutil.parser.parse(datestring, dayfirst=True)
@@ -14,7 +18,7 @@ def process_extension():
     """This function processes the coursework extensions
     """
     not_processed=False
-    for filename in BatchProcess('C:/Users/ppzmis/OneDrive - The University of Nottingham/Documents/DLO/Extensions_to_approve/*.*'):
+    for filename in BatchProcess(DLO_DIR + '/Extensions_to_approve/*.*'):
         if process(filename=filename):
             not_processed = True
     return not_processed
@@ -29,14 +33,14 @@ def process(filename):
     return manual
 
 
-def process_other(filename='test.pdf', filepath='C:/Users/ppzmis/OneDrive - The University of Nottingham/Documents/DLO/', filetype='.pdf'):
+def process_other(filename='test.pdf', filepath=DLO_DIR, filetype='.pdf'):
     #Processes pdf and img files
     output_filename = filepath + 'Extensions_to_approve/manual/' + str(datetime.date.today().strftime("%Y_%m_%d")) + '_' + str(uuid.uuid4()) + '_' + filetype
     shutil.move(filepath+'Extensions_to_approve/'+filename, output_filename)
     return True
 
 
-def process_docx(filename='test.docx', signature='signature.png', filepath ='C:/Users/ppzmis/OneDrive - The University of Nottingham/Documents/DLO/'):
+def process_docx(filename='test.docx', signature='signature.png', filepath = DLO_DIR):
     #Processes word docs
     manual=False
     doc = Document(filepath + 'Extensions_to_approve/' + filename)
@@ -83,7 +87,7 @@ def process_docx(filename='test.docx', signature='signature.png', filepath ='C:/
     return manual
 
 
-def store_files(file_list, filepath='C:/Users/ppzmis/OneDrive - The University of Nottingham/Documents/DLO/Approved_extensions/'):
+def store_files(file_list, filepath=DLO_DIR + 'Approved_extensions/'):
     print(file_list)
     for file in file_list:
         path, filename = os.path.split(file)
@@ -94,7 +98,7 @@ def store_files(file_list, filepath='C:/Users/ppzmis/OneDrive - The University o
         shutil.move(file, dir_name + filename)
 
 
-def cleanup(filepath='C:/Users/ppzmis/OneDrive - The University of Nottingham/Documents/DLO/'):
+def cleanup(filepath=DLO_DIR):
     for file in BatchProcess(filepath+'/Extensions_to_approve/*.*'):
         os.remove(file)
     for file in BatchProcess(filepath+'/Approved_extensions/*.*'):
