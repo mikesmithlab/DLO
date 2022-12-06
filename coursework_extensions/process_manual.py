@@ -17,6 +17,9 @@ approved_files = get_directory_filenames('C:/Users/ppzmis/OneDrive - The Univers
 
 send_email(approve_email, approved_files)
 store_files(approved_files)
+
+check_num_requests(approved_files)
+
 cleanup()
 
 
