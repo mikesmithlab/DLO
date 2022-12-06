@@ -1,0 +1,89 @@
+1670347098241	geckodriver	INFO	Listening on 127.0.0.1:51489
+1670347169056	geckodriver	INFO	Listening on 127.0.0.1:51630
+1670347206825	geckodriver	INFO	Listening on 127.0.0.1:51703
+1670347366341	geckodriver	INFO	Listening on 127.0.0.1:51824
+1670347366873	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "-no-remote" "-profile" "C:\\Users\\ppzmis\\AppData\\Local\\Temp\\rust_mozprofilek7nNzX"
+1670347367834	Marionette	INFO	Marionette enabled
+1670347367846	Marionette	INFO	Listening on port 51835
+Read port: 51835
+1670347368639	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at C:\\Users\\ppzmis\\AppData\\Local\\Temp\\rust_mozprofilek7nNzX\\search.json.mozlz4", (void 0)))
+console.warn: LoginRecipes: "Falling back to a synchronous message for: https://campus.nottingham.ac.uk."
+console.warn: LoginRecipes: "Falling back to a synchronous message for: https://campus.nottingham.ac.uk."
+JavaScript warning: https://campus.nottingham.ac.uk/cs/csprd/cache/1/PT_PAGESCRIPT_FMODE_UKE_1.js, line 3087: unreachable code after return statement
+JavaScript warning: https://campus.nottingham.ac.uk/cs/csprd/cache/1/PT_PAGESCRIPT_FMODE_UKE_1.js, line 3087: unreachable code after return statement
+JavaScript warning: https://campus.nottingham.ac.uk/cs/csprd/cache/1/PT_TYPEAHEAD_UKE_win0_1.js, line 1387: unreachable code after return statement
+JavaScript warning: https://campus.nottingham.ac.uk/cs/csprd/cache/1/PT_TYPEAHEAD_UKE_win0_1.js, line 1400: unreachable code after return statement
+JavaScript error: https://campus.nottingham.ac.uk/psc/csprd/EMPLOYEE/SA/c/UN_ACADEMIC_MNU.UN_ACAD_STUDENT, line 1: TypeError: document.UN_ACAD_STD_WRK_UN_EXPORT_PB$IMG is undefined
+JavaScript error: https://campus.nottingham.ac.uk/psc/csprd/EMPLOYEE/SA/c/UN_ACADEMIC_MNU.UN_ACAD_STUDENT, line 1: TypeError: document.UN_ACAD_STD_WRK_UN_EXPORT_PB$IMG is undefined
+JavaScript warning: https://campus.nottingham.ac.uk/cs/csprd/cache/1/PT_PAGESCRIPT_FMODE_UKE_1.js, line 3087: unreachable code after return statement
+SourceActor threw an exception: [Exception... "Failed to open input source 'javascript:submitAction_win0(document.win0,'UN_ACAD_STD_H_DESCR60$1');'"  nsresult: "0x80040111 (NS_ERROR_NOT_AVAILABLE)"  location: "JS frame :: resource://devtools/shared/DevToolsUtils.js :: mainThreadFetch/< :: line 676"  data: yes]
+Stack: mainThreadFetch/<@resource://devtools/shared/DevToolsUtils.js:676:15
+mainThreadFetch@resource://devtools/shared/DevToolsUtils.js:520:10
+_fetchURLContents@resource://devtools/server/actors/utils/sources-manager.js:446:22
+urlContents@resource://devtools/server/actors/utils/sources-manager.js:410:17
+_resurrectSource@resource://devtools/server/actors/thread.js:2154:35
+addAllSources@resource://devtools/server/actors/thread.js:1486:14
+watch@resource://devtools/server/actors/resources/sources.js:78:17
+watchResources@resource://devtools/server/actors/resources/index.js:302:19
+addSessionDataEntry@resource://devtools/server/actors/targets/session-data-processors/resources.js:11:21
+addSessionDataEntry@resource://devtools/server/actors/targets/target-actor-mixin.js:46:25
+_addSessionDataEntry@resource://devtools/server/connectors/js-window-actor/DevToolsFrameChild.sys.mjs:528:24
+receiveMessage@resource://devtools/server/connectors/js-window-actor/DevToolsFrameChild.sys.mjs:437:21
+Line: 676, column: 0
+console.error: ({})
+SourceActor threw an exception: [Exception... "Failed to open input source 'javascript:submitAction_win0(document.win0,'UN_ACAD_STD_WRK_UN_SELECT_ALL');'"  nsresult: "0x80040111 (NS_ERROR_NOT_AVAILABLE)"  location: "JS frame :: resource://devtools/shared/DevToolsUtils.js :: mainThreadFetch/< :: line 676"  data: yes]
+Stack: mainThreadFetch/<@resource://devtools/shared/DevToolsUtils.js:676:15
+mainThreadFetch@resource://devtools/shared/DevToolsUtils.js:520:10
+_fetchURLContents@resource://devtools/server/actors/utils/sources-manager.js:446:22
+urlContents@resource://devtools/server/actors/utils/sources-manager.js:410:17
+_resurrectSource@resource://devtools/server/actors/thread.js:2154:35
+addAllSources@resource://devtools/server/actors/thread.js:1486:14
+watch@resource://devtools/server/actors/resources/sources.js:78:17
+watchResources@resource://devtools/server/actors/resources/index.js:302:19
+addSessionDataEntry@resource://devtools/server/actors/targets/session-data-processors/resources.js:11:21
+addSessionDataEntry@resource://devtools/server/actors/targets/target-actor-mixin.js:46:25
+_addSessionDataEntry@resource://devtools/server/connectors/js-window-actor/DevToolsFrameChild.sys.mjs:528:24
+receiveMessage@resource://devtools/server/connectors/js-window-actor/DevToolsFrameChild.sys.mjs:437:21
+Line: 676, column: 0
+console.error: ({})
+SourceActor threw an exception: [Exception... "Failed to open input source 'javascript:submitAction_win0(document.win0,'UN_ACAD_STD_WRK_UN_EXPORT_PB');'"  nsresult: "0x80040111 (NS_ERROR_NOT_AVAILABLE)"  location: "JS frame :: resource://devtools/shared/DevToolsUtils.js :: mainThreadFetch/< :: line 676"  data: yes]
+Stack: mainThreadFetch/<@resource://devtools/shared/DevToolsUtils.js:676:15
+mainThreadFetch@resource://devtools/shared/DevToolsUtils.js:520:10
+_fetchURLContents@resource://devtools/server/actors/utils/sources-manager.js:446:22
+urlContents@resource://devtools/server/actors/utils/sources-manager.js:410:17
+_resurrectSource@resource://devtools/server/actors/thread.js:2154:35
+addAllSources@resource://devtools/server/actors/thread.js:1486:14
+watch@resource://devtools/server/actors/resources/sources.js:78:17
+watchResources@resource://devtools/server/actors/resources/index.js:302:19
+addSessionDataEntry@resource://devtools/server/actors/targets/session-data-processors/resources.js:11:21
+addSessionDataEntry@resource://devtools/server/actors/targets/target-actor-mixin.js:46:25
+_addSessionDataEntry@resource://devtools/server/connectors/js-window-actor/DevToolsFrameChild.sys.mjs:528:24
+receiveMessage@resource://devtools/server/connectors/js-window-actor/DevToolsFrameChild.sys.mjs:437:21
+Line: 676, column: 0
+console.error: ({})
+JavaScript error: resource://devtools/shared/DevToolsUtils.js, line 676: NS_ERROR_NOT_AVAILABLE: Failed to open input source 'javascript:submitAction_win0(document.win0,'UN_ACAD_STD_H_DESCR60$1');'
+JavaScript error: resource://devtools/shared/DevToolsUtils.js, line 676: NS_ERROR_NOT_AVAILABLE: Failed to open input source 'javascript:submitAction_win0(document.win0,'UN_ACAD_STD_WRK_UN_SELECT_ALL');'
+JavaScript error: resource://devtools/shared/DevToolsUtils.js, line 676: NS_ERROR_NOT_AVAILABLE: Failed to open input source 'javascript:submitAction_win0(document.win0,'UN_ACAD_STD_WRK_UN_EXPORT_PB');'
+SourceActor threw an exception: [Exception... "Component returned failure code: 0x80470002 (NS_BASE_STREAM_CLOSED) [nsIInputStream.available]"  nsresult: "0x80470002 (NS_BASE_STREAM_CLOSED)"  location: "JS frame :: resource://devtools/shared/DevToolsUtils.js :: onResponse :: line 571"  data: no]
+Stack: onResponse@resource://devtools/shared/DevToolsUtils.js:571:34
+onStopRequest@resource://gre/modules/NetUtil.jsm:126:18
+Line: 571, column: 0
+console.error: ({})
+JavaScript error: resource://devtools/shared/DevToolsUtils.js, line 571: NS_BASE_STREAM_CLOSED: Component returned failure code: 0x80470002 (NS_BASE_STREAM_CLOSED) [nsIInputStream.available]
+JavaScript error: resource://gre/modules/XULStore.jsm, line 58: Error: Can't find profile directory.
+JavaScript error: resource://gre/modules/AsyncShutdown.jsm, line 574: NotFoundError: No such JSWindowActor 'DevToolsFrame'
+1670347655963	Marionette	INFO	Stopped listening on port 51835
+[Parent 14184, IPC I/O Parent] WARNING: DuplicateHandle failed for handle 0 in TransferHandles: file /builds/worker/checkouts/gecko/ipc/chromium/src/chrome/common/ipc_channel_win.cc:746
+
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at C:\\Users\\ppzmis\\AppData\\Local\\Temp\\rust_mozprofile09Gd6z\\search.json.mozlz4", (void 0)))
+console.warn: LoginRecipes: "Falling back to a synchronous message for: https://campus.nottingham.ac.uk."
+console.warn: LoginRecipes: "Falling back to a synchronous message for: https://campus.nottingham.ac.uk."
+JavaScript warning: https://campus.nottingham.ac.uk/cs/csprd/cache/1/PT_PAGESCRIPT_FMODE_UKE_1.js, line 3087: unreachable code after return statement
+JavaScript warning: https://campus.nottingham.ac.uk/cs/csprd/cache/1/PT_PAGESCRIPT_FMODE_UKE_1.js, line 3087: unreachable code after return statement
+JavaScript warning: https://campus.nottingham.ac.uk/cs/csprd/cache/1/PT_TYPEAHEAD_UKE_win0_1.js, line 1387: unreachable code after return statement
+JavaScript warning: https://campus.nottingham.ac.uk/cs/csprd/cache/1/PT_TYPEAHEAD_UKE_win0_1.js, line 1400: unreachable code after return statement
+JavaScript error: https://campus.nottingham.ac.uk/psc/csprd/EMPLOYEE/SA/c/UN_ACADEMIC_MNU.UN_ACAD_STUDENT, line 1: TypeError: document.UN_ACAD_STD_WRK_UN_EXPORT_PB$IMG is undefined
+JavaScript error: https://campus.nottingham.ac.uk/psc/csprd/EMPLOYEE/SA/c/UN_ACADEMIC_MNU.UN_ACAD_STUDENT, line 1: TypeError: document.UN_ACAD_STD_WRK_UN_EXPORT_PB$IMG is undefined
+JavaScript warning: https://campus.nottingham.ac.uk/cs/csprd/cache/1/PT_PAGESCRIPT_FMODE_UKE_1.js, line 3087: unreachable code after return statement
+1670347692271	Marionette	INFO	Stopped listening on port 51993

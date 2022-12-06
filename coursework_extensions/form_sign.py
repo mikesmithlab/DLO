@@ -95,7 +95,7 @@ def store_files(file_list, filepath=DLO_DIR + 'Approved_extensions/'):
         print(dir_name)
         if not os.path.exists(dir_name):
             os.mkdir(dir_name)
-        shutil.move(file, dir_name + filename)
+        shutil.move(file, dir_name + '/' + filename)
 
 
 def cleanup(filepath=DLO_DIR):
