@@ -8,15 +8,18 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.firefox.options import Options
 import json
 from time import sleep
+import shutil
+import os
+import glob
 
 from coursework_extensions.addresses import DLO_DIR
 
 
 class Campus:
     def __init__(self, login_file):
-        options = Options()
-        options.binary_location = r'C:\Program Files\Mozilla Firefox\firefox.exe'
-        self.driver = webdriver.Firefox(options=options)
+        #options = Options()
+        #options.binary_location = r'C:\Program Files\Mozilla Firefox\firefox.exe'
+        self.driver = webdriver.Chrome()
         self.driver.get('https://campus.nottingham.ac.uk/psp/csprd/?cmd=login')
         self.driver.maximize_window()
         with open(login_file) as f:
@@ -57,12 +60,29 @@ class Campus:
         self._campus_wait_for_load("UN_ACAD_STD_WRK_UN_EXPORT_PB$IMG")
         #click export on popup
         sleep(5)
+        #Download the spreadsheet - settle in for a long wait!
+        self.driver.get('https://campus.nottingham.ac.uk/psc/csprd/EMPLOYEE/SA/s/WEBLIB_UN_AWC.ISCRIPT1.FieldFormula.IScript_GetExcelFile?term=CURR&option=ALL')
+        #Put file somewhere sensible
+        print('Downloaded')
+        self._move_downloaded_file()
 
-        export_form = self.driver.find_element_by_id('win0divUN_ACAD_STD_WRK_UN_EXPORT_PB')
-        # create action chain object
-        # perform the operation
-        element = self.driver.find_element_by_xpath('//*[@id="UN_AWC_WRK_UN_EXPORT_PB"]')
-        self.driver.execute_script("arguments[0].click();", element)
+    def _move_downloaded_file(self):
+        not_found=True
+        while not_found:
+            try:
+                #Moves downloaded file to DLO
+                print(os.environ['USERPROFILE'] + 'Downloads/StudentExport*.xlsx')
+                exported_file = glob.glob(os.environ['USERPROFILE'] + '/Downloads/StudentExport*.xlsx')
+                shutil.move(exported_file[0], DLO_DIR + 'Campus/StudentExport.xlsx')
+                not_found=False
+                print('Moved')
+            except:
+                sleep(5)
+
+    def close(self):
+        self.driver.quit()
+
+
 
 
 
@@ -84,3 +104,4 @@ class Campus:
 if __name__ == '__main__':
     campus = Campus(DLO_DIR + 'login.json')
     campus.download_student_records()
+    campus.close()

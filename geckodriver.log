@@ -87,3 +87,14 @@ JavaScript error: https://campus.nottingham.ac.uk/psc/csprd/EMPLOYEE/SA/c/UN_ACA
 JavaScript error: https://campus.nottingham.ac.uk/psc/csprd/EMPLOYEE/SA/c/UN_ACADEMIC_MNU.UN_ACAD_STUDENT, line 1: TypeError: document.UN_ACAD_STD_WRK_UN_EXPORT_PB$IMG is undefined
 JavaScript warning: https://campus.nottingham.ac.uk/cs/csprd/cache/1/PT_PAGESCRIPT_FMODE_UKE_1.js, line 3087: unreachable code after return statement
 1670347692271	Marionette	INFO	Stopped listening on port 51993
+1670409409450	geckodriver	INFO	Listening on 127.0.0.1:58515
+1670409410005	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "-no-remote" "-profile" "C:\\Users\\ppzmis\\AppData\\Local\\Temp\\rust_mozprofileJPdZTb"
+1670409411721	Marionette	INFO	Marionette enabled
+1670409411728	Marionette	INFO	Listening on port 58526
+Read port: 58526
+Read port: 58526
+1670409412977	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at C:\\Users\\ppzmis\\AppData\\Local\\Temp\\rust_mozprofileJPdZTb\\search.json.mozlz4", (void 0)))
+1670409415174	Marionette	INFO	Stopped listening on port 58526
+JavaScript error: chrome://remote/content/marionette/cert.sys.mjs, line 51: NS_ERROR_NOT_AVAILABLE: Component returned failure code: 0x80040111 (NS_ERROR_NOT_AVAILABLE) [nsICertOverrideService.setDisableAllSecurityChecksAndLetAttackersInterceptMyData]
+[Parent 9044, IPC I/O Parent] WARNING: DuplicateHandle failed for handle 0 in TransferHandles: file /builds/worker/checkouts/gecko/ipc/chromium/src/chrome/common/ipc_channel_win.cc:746
