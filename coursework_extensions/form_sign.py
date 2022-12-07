@@ -8,6 +8,9 @@ import os
 
 from filehandling import BatchProcess
 
+import sys
+# setting path
+sys.path.append('..')
 from addresses import DLO_DIR
 
 

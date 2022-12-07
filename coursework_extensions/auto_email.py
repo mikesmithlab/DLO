@@ -2,6 +2,10 @@ import win32com.client as win32
 import datetime
 import pathlib
 
+import sys
+
+# setting path
+sys.path.append('..')
 
 from addresses import DLO_DIR, SS_SERVICES
 

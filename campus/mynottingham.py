@@ -12,7 +12,11 @@ import shutil
 import os
 import glob
 
-from coursework_extensions.addresses import DLO_DIR
+
+import sys
+# setting path
+sys.path.append('..')
+from addresses import DLO_DIR
 
 
 class Campus:
