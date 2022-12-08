@@ -21,8 +21,11 @@ manual_email = {
         'to' : 'mike.i.smith@nottingham.ac.uk',
         }
 
-"""
-disregard_element_email = {
+
+def struggling_email(tutee_name):
+
+
+    disregard_element_email = {
     'subject' : 'Concern about your tutee',
     'body' : '',
     'to' : '',
