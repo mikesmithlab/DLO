@@ -70,6 +70,8 @@ class Campus:
         print('Downloaded')
         self._move_downloaded_file()
 
+
+    #kjksjhdfkjhsdfksdhjsk
     def _move_downloaded_file(self):
         not_found=True
         while not_found:
@@ -85,24 +87,6 @@ class Campus:
 
     def close(self):
         self.driver.quit()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 if __name__ == '__main__':

@@ -7,7 +7,7 @@ import sys
 # setting path
 sys.path.append('..')
 
-from addresses import DLO_DIR, SS_SERVICES
+from addresses import DLO_DIR, SS_SERVICES, MEL
 
 approve_email = {
         'subject' : 'course work extension approved',
@@ -37,7 +37,7 @@ def struggling_email(tutee_name):
 
 
 def scan_recent_email(email_address=SS_SERVICES,
-                    filepath = DLO_DIR + 'Extensions_to_approve/'):
+                    filepath=DLO_DIR + 'Extensions_to_approve/'):
 
     #/O=EXCHANGELABS/OU=EXCHANGE ADMINISTRATIVE GROUP (FYDIBOHF23SPDLT)/CN=RECIPIENTS/CN=99114A96025D4D768FB7BF3BC9DB1D36-SS-ASSESS-S
 
@@ -87,3 +87,5 @@ def send_email(msg, attachments=None, filepath = DLO_DIR + 'Approved_extensions/
 
     mail.Send()
 
+#if __name__ == '__main__':
+#    scan_recent_email(email_address='ppzmjs@exmail.nottingham.ac.uk')

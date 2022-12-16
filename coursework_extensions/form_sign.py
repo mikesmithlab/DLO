@@ -14,7 +14,7 @@ sys.path.append('..')
 from addresses import DLO_DIR
 
 
-def parse_date(datestring):
+def parse_date(datestring : str) -> datetime.datetime:
     return dateutil.parser.parse(datestring, dayfirst=True)
 
 def process_extension():
@@ -44,50 +44,65 @@ def process_other(filename='test.pdf', filepath=DLO_DIR, filetype='.pdf'):
 
 
 def process_docx(filename='test.docx', signature='signature.png', filepath = DLO_DIR):
+
     #Processes word docs
     manual=False
     doc = Document(filepath + 'Extensions_to_approve/' + filename)
 
-    request = {
-        'name':doc.tables[0].cell(0,1).text,
-        'id': doc.tables[0].cell(1,1).text,
-        'module': doc.tables[1].cell(1,0).text,
-        'original_deadline' : parse_date(doc.tables[1].cell(1,2).text),
-        'new_deadline' : parse_date(doc.tables[1].cell(1,3).text),
-        }
-    request['date_diff'] = (request['new_deadline']-request['original_deadline']).days
+    try:
+        request = {
+            'name':doc.tables[0].cell(0,1).text,
+            'id': doc.tables[0].cell(1,1).text,
+            'module': doc.tables[1].cell(1,0).text,
+            'original_deadline' : parse_date(doc.tables[1].cell(1,2).text),
+            'new_deadline' : parse_date(doc.tables[1].cell(1,3).text),
+            }
+        request['date_diff'] = (request['new_deadline']-request['original_deadline']).days
 
-    if request['date_diff'] > 7:
+
+        #Conditions :  if manual is still False after these the coursework can be automatically processed
+        if (request['original_deadline'] -  datetime.datetime.now()).days < 0:
+            #Asked for extension after original deadline
+            manual=True
+        elif request['date_diff'] > 7:
+            #Asked for longer than 7 days
+            manual=True
+        elif 'PHYS4' in request['module']:
+            #4th year module requires manual intervention
+            manual=True
+
+
+
+        doc.tables[1].cell(1,4).paragraphs[0].text=''
+        doc.tables[1].cell(1,4).paragraphs[0].add_run().add_picture(filepath+signature)
+
+        today = str(datetime.date.today().strftime("%d/%m/%Y"))
+
+        for paragraph in doc.paragraphs:
+            if 'Staff Signature:' in paragraph.text:
+                paragraph.text = ''
+                paragraph.add_run('Staff Signature:').bold = True
+                paragraph.add_run('..........')
+                run2=paragraph.add_run()
+                run2.add_picture(filepath+signature)
+                paragraph.add_run('................')
+                paragraph.add_run('Staff name:').bold = True
+                paragraph.add_run('........Mike Smith...........')
+                paragraph.add_run('Date:').bold = True
+                paragraph.add_run('..............' + today + '...................')
+
+
+        if manual:
+            #Move to folder for manual processing
+            doc.save(filepath + 'Extensions_to_approve/manual/' + str(datetime.date.today().strftime("%Y_%m_%d")) + '_' + request['name'].replace(' ','') +'.docx')
+        else:
+            doc.save(filepath + 'Approved_extensions/' + str(datetime.date.today().strftime("%Y_%m_%d")) + '_' + request['name'].replace(' ','') +'.docx')
+
+        return manual
+    except:
+        #If it fails process it manually
         manual=True
-    if 'PHYS4' in request['module']:
-        manual=True
-
-    doc.tables[1].cell(1,4).paragraphs[0].text=''
-    doc.tables[1].cell(1,4).paragraphs[0].add_run().add_picture(filepath+signature)
-
-    today = str(datetime.date.today().strftime("%d/%m/%Y"))
-
-    for paragraph in doc.paragraphs:
-        if 'Staff Signature:' in paragraph.text:
-            paragraph.text = ''
-            paragraph.add_run('Staff Signature:').bold = True
-            paragraph.add_run('..........')
-            run2=paragraph.add_run()
-            run2.add_picture(filepath+signature)
-            paragraph.add_run('................')
-            paragraph.add_run('Staff name:').bold = True
-            paragraph.add_run('........Mike Smith...........')
-            paragraph.add_run('Date:').bold = True
-            paragraph.add_run('..............' + today + '...................')
-
-
-    if manual:
-        #Move to folder for manual processing
-        doc.save(filepath + 'Extensions_to_approve/manual/' + str(datetime.date.today().strftime("%Y_%m_%d")) + '_' + request['name'].replace(' ','') +'.docx')
-    else:
-        doc.save(filepath + 'Approved_extensions/' + str(datetime.date.today().strftime("%Y_%m_%d")) + '_' + request['name'].replace(' ','') +'.docx')
-
-    return manual
+        doc.save(filepath + 'Extensions_to_approve/manual/' + str(datetime.date.today().strftime("%Y_%m_%d")) + '_problem.docx')
 
 
 def store_files(file_list, filepath=DLO_DIR + 'Approved_extensions/'):

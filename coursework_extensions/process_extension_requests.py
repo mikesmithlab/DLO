@@ -12,7 +12,7 @@ from addresses import DLO_DIR
 
 
 #Scan email for coursework extension requests and download
-scan_recent_email()
+#scan_recent_email()
 
 #Process files
 manual = process_extension()
