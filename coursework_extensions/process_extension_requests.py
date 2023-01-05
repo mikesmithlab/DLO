@@ -1,6 +1,6 @@
 from filehandling import BatchProcess, get_directory_filenames
+from emails.emails.auto_email import scan_recent_email, send_email, manual_email, approve_email
 
-from auto_email import scan_recent_email, send_email, manual_email, approve_email
 from form_sign import process_extension, store_files, cleanup
 from checks import check_num_requests
 

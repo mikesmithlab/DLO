@@ -8,49 +8,38 @@ import sys
 sys.path.append('..')
 
 from addresses import DLO_DIR, SS_SERVICES, MEL
+from messages import manual_email, approve_email
 
-approve_email = {
-        'subject' : 'course work extension approved',
-        'body' : 'approved',
-        'to' : 'mike.i.smith@nottingham.ac.uk',
-        }
-
-manual_email = {
-        'subject' : 'You have manual extensions to process',
-        'body' : '',
-        'to' : 'mike.i.smith@nottingham.ac.uk',
-        }
-
-"""
-def struggling_email(tutee_name):
-
-
-    disregard_element_email = {
-    'subject' : 'Concern about your tutee',
-    'body' : '',
-    'to' : '',
-    'cc : 'frazer.pearce@nottingham.ac.uk; kim
-}
-"""
+from emails import auto_email
+from pydates.pydates import now, relative_datetime
 
 
 
 
-def scan_recent_email(email_address=SS_SERVICES,
+def scan_recent_email(email_addresses=SS_SERVICES,
                     filepath=DLO_DIR + 'Extensions_to_approve/'):
 
-    #/O=EXCHANGELABS/OU=EXCHANGE ADMINISTRATIVE GROUP (FYDIBOHF23SPDLT)/CN=RECIPIENTS/CN=99114A96025D4D768FB7BF3BC9DB1D36-SS-ASSESS-S
+    outlook = auto_email.open_outlook()
+
+    if type(email_addresses) == str:
+        email_addresses = [email_addresses]
+
+    filter = {'start': relative_datetime(now(),delta_day=1),
+              'stop':relative_datetime(now(),delta_day=-7),
+              'has_attachments':True}
+
+    for email in email_addresses:
+        filter['from_email'] = email
+        msgs = auto_email.get_emails(outlook, filter=filter)
+        auto_email.download_attachments(msgs, filepath)
+
+
 
     outlook = win32.Dispatch("Outlook.Application").GetNamespace("MAPI")
     inbox = outlook.GetDefaultFolder(6)
     messages=inbox.Items
     coursework = inbox.Folders['DLO'].Folders['coursework_extensions']
 
-    #Filter email
-    start_time = str((datetime.datetime.now().replace(hour=0,minute=0,second=0)-datetime.timedelta(days=7)).strftime("%Y-%d-%m %H:%M %p"))
-    stop_time = str(datetime.datetime.now().replace(hour=23,minute=59,second=59).strftime("%Y-%d-%m %H:%M %p"))
-    messages = messages.Restrict("[ReceivedTime] >= '" + start_time + "' And [ReceivedTime] <= '" + stop_time + "'")
-    messages = messages.Restrict("[SenderEmailAddress] = '{}'".format(email_address))
     inbox_msgs = list(messages)
 
     attachment_names = []
