@@ -1,8 +1,16 @@
+from enum import auto
+import os
+import os, sys
 
-from filehandling import BatchProcess
+parent = os.path.abspath('.')
+sys.path.insert(1, parent)
+
+import addresses
+
+from emails import auto_email
+
+outlook = auto_email.open_outlook()
+
+    
 
 
-filter = 'C:/Users/mikei/OneDrive - The University of Nottingham/Documents/DLO/Approved_extensions/*/2022_12_*'
-
-for i, file in enumerate(BatchProcess(filter)):
-    print(i)

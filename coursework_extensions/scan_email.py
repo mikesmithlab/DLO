@@ -1,66 +1,44 @@
+import os, sys
+
+parent = os.path.abspath('.')
+sys.path.insert(1, parent)
+
 import win32com.client as win32
 import datetime
 import pathlib
 
-import sys
-
-# setting path
-sys.path.append('..')
-
-from addresses import DLO_DIR, SS_SERVICES, MEL
-from messages import manual_email, approve_email
+#from messages import manual_email, approve_email
 
 from emails import auto_email
-from pydates.pydates import now, relative_datetime
+from pydates.pydates import now, relative_datetime, format_datetime_to_str
+from addresses import DLO_DIR
 
-
-
-
-def scan_recent_email(email_addresses=SS_SERVICES,
-                    filepath=DLO_DIR + 'Extensions_to_approve/'):
-
+def scan_recent_email(filepath=None):
+    """
+    Scan all email in last 14 days. Find those from SS_SERVICES containing attachments
+    and then download with uniqueid for filename as long as they are not email signatures such as 'image001.jpg'
+    """
     outlook = auto_email.open_outlook()
-
-    if type(email_addresses) == str:
-        email_addresses = [email_addresses]
-
-    filter = {'start': relative_datetime(now(),delta_day=1),
-              'stop':relative_datetime(now(),delta_day=-7),
-              'has_attachments':True}
+    
+    email_addresses=auto_email.find_sender_emails(outlook, folder=('Inbox','DLO','coursework_extensions'))
+    
+    filter = {'start': relative_datetime(now(),delta_day=-14),
+              'stop':relative_datetime(now(),delta_day=1),
+              'has_attachments':True}   
 
     for email in email_addresses:
         filter['from_email'] = email
         msgs = auto_email.get_emails(outlook, filter=filter)
-        auto_email.download_attachments(msgs, filepath)
-
-
-
-    outlook = win32.Dispatch("Outlook.Application").GetNamespace("MAPI")
-    inbox = outlook.GetDefaultFolder(6)
-    messages=inbox.Items
-    coursework = inbox.Folders['DLO'].Folders['coursework_extensions']
-
-    inbox_msgs = list(messages)
-
-    attachment_names = []
-    for i,message in enumerate(inbox_msgs):
-        if len(message.Attachments) >= 1:
-            for j,attachment in enumerate(message.Attachments):
-                if attachment.FileName != 'image001.jpg':
-                    output_file = 'request_'+str(i) + '_' + str(j) + pathlib.Path(attachment.FileName).suffix
-                    attachment.SaveAsFile(filepath + output_file)
-                    attachment_names.append(output_file)
-            message.Move(coursework)
-
-    return attachment_names
-
+        auto_email.download_attachments(msgs, filepath, filter_out=('.jpg','.png'), change_filename=True)
+        auto_email.move_emails(outlook, msgs, folder=('Inbox','DLO','coursework_extensions'))
+"""
 def send_email(msg, attachments=None, filepath = DLO_DIR + 'Approved_extensions/'):
-    """
+    
     Only works from local outlook email client
 
     msg is a dictionary of the info for email
     attachments should be a list of filenames.
-    """
+    
 
     outlook = win32.Dispatch('outlook.application')
     mail = outlook.CreateItem(0)
@@ -78,3 +56,4 @@ def send_email(msg, attachments=None, filepath = DLO_DIR + 'Approved_extensions/
 
 #if __name__ == '__main__':
 #    scan_recent_email(email_address='ppzmjs@exmail.nottingham.ac.uk')
+"""

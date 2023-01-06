@@ -4,31 +4,30 @@ import datetime
 import pathlib
 import shutil
 import uuid
-import os
+import os, sys
 
 from filehandling import BatchProcess
+from pydates.pydates import parse_date
 
-import sys
-# setting path
-sys.path.append('..')
+parent = os.path.abspath('.')
+sys.path.insert(1, parent)
 from addresses import DLO_DIR
 
 
-def parse_date(datestring : str) -> datetime.datetime:
-    return dateutil.parser.parse(datestring, dayfirst=True)
-
 def process_extension():
     """This function processes the coursework extensions
+    If function returns True further manual processing required
     """
-    not_processed=False
-    for filename in BatchProcess(DLO_DIR + '/Extensions_to_approve/*.*'):
+    manual_processing=False
+    for filename in BatchProcess(DLO_DIR + 'Extensions_to_approve/*.*'):
         if process(filename=filename):
-            not_processed = True
-    return not_processed
+            manual_processing = True
+    return manual_processing
 
 def process(filename):
     filetype = pathlib.Path(filename).suffix
     path, filename = os.path.split(filename)
+    
     if filetype == '.docx':
         manual = process_docx(filename=filename)
     else:
@@ -44,7 +43,7 @@ def process_other(filename='test.pdf', filepath=DLO_DIR, filetype='.pdf'):
 
 
 def process_docx(filename='test.docx', signature='signature.png', filepath = DLO_DIR):
-
+    print('process docx')
     #Processes word docs
     manual=False
     doc = Document(filepath + 'Extensions_to_approve/' + filename)
@@ -70,7 +69,6 @@ def process_docx(filename='test.docx', signature='signature.png', filepath = DLO
         elif 'PHYS4' in request['module']:
             #4th year module requires manual intervention
             manual=True
-
 
 
         doc.tables[1].cell(1,4).paragraphs[0].text=''
@@ -106,7 +104,6 @@ def process_docx(filename='test.docx', signature='signature.png', filepath = DLO
 
 
 def store_files(file_list, filepath=DLO_DIR + 'Approved_extensions/'):
-    print(file_list)
     for file in file_list:
         path, filename = os.path.split(file)
         dir_name = filepath + filename.split('_')[0] + '_' + filename.split('_')[-1].split('.')[0]
