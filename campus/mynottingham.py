@@ -30,7 +30,6 @@ class Campus:
             login_details = json.loads(f.read())
         self.login(login_details['username'], login_details['password'])
 
-
     def login(self, username, password):
         username_box = self.driver.find_element_by_id('userid')
         password_box = self.driver.find_element_by_id('pwd')
@@ -52,7 +51,6 @@ class Campus:
             except:
                 sleep(1)
 
-
     def download_student_records(self, timeout=20):
         #Open mystudents
         self._campus_wait_for_load('win0groupletPTNUI_LAND_REC_GROUPLET$0')
@@ -71,7 +69,6 @@ class Campus:
         self._move_downloaded_file()
 
 
-    #kjksjhdfkjhsdfksdhjsk
     def _move_downloaded_file(self):
         not_found=True
         while not_found:
@@ -79,7 +76,7 @@ class Campus:
                 #Moves downloaded file to DLO
                 print(os.environ['USERPROFILE'] + 'Downloads/StudentExport*.xlsx')
                 exported_file = glob.glob(os.environ['USERPROFILE'] + '/Downloads/StudentExport*.xlsx')
-                shutil.move(exported_file[0], DLO_DIR + 'Campus/StudentExport.xlsx')
+                shutil.move(exported_file[0], DLO_DIR + 'Campus/student_export.xlsx')
                 not_found=False
                 print('Moved')
             except:

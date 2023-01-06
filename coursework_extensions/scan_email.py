@@ -11,7 +11,6 @@ import pathlib
 
 from emails import auto_email
 from pydates.pydates import now, relative_datetime, format_datetime_to_str
-from addresses import DLO_DIR
 
 def scan_recent_email(filepath=None):
     """
