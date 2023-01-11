@@ -44,7 +44,6 @@ def process_other(filename='test.pdf', filepath=DLO_DIR, filetype='.pdf'):
 
 
 def process_docx(filename='test.docx', signature='signature.png', filepath = DLO_DIR):
-    print('process docx')
     #Processes word docs
     manual=False
     doc = Document(filepath + 'Extensions_to_approve/' + filename)

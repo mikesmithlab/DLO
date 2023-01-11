@@ -9,8 +9,15 @@ import addresses
 
 from emails import auto_email
 
-outlook = auto_email.open_outlook()
+
 
     
+class Test:
+    def __init__(self):
+        self.FileName = 'asdij.docx'
+
+attachment = Test()
+
+print(auto_email._keep_attachment(attachment, ('.jpg',)))
 
 

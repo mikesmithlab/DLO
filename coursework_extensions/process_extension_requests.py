@@ -16,6 +16,7 @@ from addresses import DLO_DIR
 
 
 #Scan email for coursework extension requests and download
+print('scanning email...')
 scan_recent_email(filepath=DLO_DIR + 'Extensions_to_approve/')
 
 

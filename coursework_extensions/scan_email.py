@@ -30,6 +30,21 @@ def scan_recent_email(filepath=None):
         msgs = auto_email.get_emails(outlook, filter=filter)
         auto_email.download_attachments(msgs, filepath, filter_out=('.jpg','.png'), change_filename=True)
         auto_email.move_emails(outlook, msgs, folder=('Inbox','DLO','coursework_extensions'))
+
+def clean_email():
+    #Ridding inbox of all the support plan notifications
+    outlook = auto_email.open_outlook()
+    
+    email_addresses=auto_email.find_sender_emails(outlook, folder=('Inbox','DLO','support_plan'))  
+
+    filter = {'subject':'Support Plan'} 
+
+    for email in email_addresses:
+        filter['from_email'] = email
+        msgs = auto_email.get_emails(outlook, filter=filter)
+        auto_email.move_emails(outlook, msgs, folder=('Inbox','DLO','coursework_extensions'))
+
+
 """
 def send_email(msg, attachments=None, filepath = DLO_DIR + 'Approved_extensions/'):
     
