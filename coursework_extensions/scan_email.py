@@ -44,7 +44,8 @@ def clean_email():
         msgs = auto_email.get_emails(outlook, filter=filter)
         auto_email.move_emails(outlook, msgs, folder=('Inbox','DLO','coursework_extensions'))
 
-
+if __name__ == '__main__':
+    clean_email()
 """
 def send_email(msg, attachments=None, filepath = DLO_DIR + 'Approved_extensions/'):
     
