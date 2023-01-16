@@ -20,6 +20,10 @@ from addresses import DLO_DIR
 
 
 class Campus:
+    """
+    Campus class downloads the complete accessible student record from campus as a csv 
+    and stores it for further use.
+    """
     def __init__(self, login_file):
         #options = Options()
         #options.binary_location = r'C:\Program Files\Mozilla Firefox\firefox.exe'

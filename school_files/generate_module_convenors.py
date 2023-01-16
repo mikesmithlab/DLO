@@ -17,7 +17,8 @@ def get_table_data(table, headings):
             data = pd.concat([data, course])
     return data
 
-def get_emails(df, filepath=DLO_DIR + 'Campus/emails.xlsx'):
+def get_convenor_emails(df, filepath=DLO_DIR + 'Campus/emails.xlsx'):
+
     df_emails = pd.read_excel(filepath)
     df['username'] = df['Convenor'].map(dict(zip(df_emails.staff, df_emails.email)))
     df['emails']=df['username'].str.replace("","") + '@exmail.nottingham.ac.uk'

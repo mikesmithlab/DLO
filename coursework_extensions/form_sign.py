@@ -7,7 +7,7 @@ import uuid
 import os, sys
 
 from filehandling import BatchProcess
-from pydates.pydates import parse_date, relative_datetime
+from pydates.pydates import parse_date, relative_datetime, format_datetime_to_str
 
 parent = os.path.abspath('.')
 sys.path.insert(1, parent)
@@ -50,20 +50,14 @@ def process_docx(filename='test.docx', signature='signature.png', filepath = DLO
 
     try:
         
-
         request = {
             'name':doc.tables[0].cell(0,1).text,
             'id': doc.tables[0].cell(1,1).text,
             'module': doc.tables[1].cell(1,0).text,
             'original_deadline' : parse_date(doc.tables[1].cell(1,2).text),
+            'new_deadline' : parse_date(doc.tables[1].cell(1,3).text),
             }
 
-        try:
-            #Handles case that new_deadline is left empty
-            new_deadline = parse_date(doc.tables[1].cell(1,3).text),
-        except:
-            new_deadline = relative_datetime(request['original_deadline'], delta_day=7)
-        
         
         request['date_diff'] = (request['new_deadline']-request['original_deadline']).days
 
@@ -78,7 +72,6 @@ def process_docx(filename='test.docx', signature='signature.png', filepath = DLO
         elif 'PHYS4' in request['module']:
             #4th year module requires manual intervention
             manual=True
-
 
         doc.tables[1].cell(1,4).paragraphs[0].text=''
         doc.tables[1].cell(1,4).paragraphs[0].add_run().add_picture(filepath+signature)
