@@ -1,12 +1,18 @@
-import pandas as pd
-import numpy as np
-from pprintpp import pprint
+
 
 import os, sys
 
+
 # setting path
-parent = os.path.abspath('..')
+parent = os.path.abspath('.')
+parent2 = os.path.abspath('..')
 sys.path.insert(1, parent)
+sys.path.insert(1,parent2)
+
+
+import pandas as pd
+import numpy as np
+from pprintpp import pprint
 
 from addresses import DLO_DIR
 
@@ -66,6 +72,7 @@ def get_student_record(id=0,name=('',''), show=False, filepath=DLO_DIR +'Campus/
 
 
 if __name__ == '__main__':
+
     while True:
         entry = input("Type student id or name separated by comma. q to quit>")
         if entry == 'q':
