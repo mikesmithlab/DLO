@@ -8,15 +8,30 @@ import os, sys
 # setting path
 parent = os.path.abspath('.')
 sys.path.insert(1, parent)
+parent = os.path.abspath('..')
+sys.path.insert(1, parent)
+
 from addresses import DLO_DIR
 
 
-def get_unique_codes(df, filepath=DLO_DIR +'Campus/', output_filename='accommodation_codes.xlsx', ):
-    accommodation_codes = df['Accommodation Type'].str.split(pat=' - ', n=0,expand=True)
+def get_unique_accommodation_codes(filepath=DLO_DIR +'Campus/', filename='student_export.xlsx', codes_filename='Full list of Campus Accommodation Codes with Descriptions Dec 22.xlsx',output_filename='accommodation_codes.xlsx'):
+    """Create a new file of the accommodation codes present in campus and combine with descriptors"""
+    df_accommodations = pd.read_excel(filepath+filename, sheet_name='Accommodations')
+    df_accommodations = df_accommodations[df_accommodations['Programme Status'].str.contains('Active')]
+    df_codesexplained =pd.read_excel(filepath+codes_filename, header=1)
+    print(df_codesexplained)
+
+    accommodation_codes = df_accommodations['Accommodation Type'].str.split(pat=' - ', n=0,expand=True)
     accommodation_codes=accommodation_codes.drop_duplicates()
     accommodation_codes = accommodation_codes[[0,1]]
     accommodation_codes[0]=accommodation_codes[0].astype(str)
-    accommodation_codes['Descriptions'] = df['Accommodation Description']
+
+    df_combined = pd.merge(accommodation_codes, df_codesexplained, how='left')
+    print(df_combined)
+    print(np.shape(accommodation_codes))
+    print(np.shape(df_combined))
+
+    accommodation_codes['Descriptions'] = df_accommodations['Accommodation Description']
     accommodation_codes.sort_values(0)
     accommodation_codes.to_excel(filepath + output_filename, index=False, header=['Code', 'Explanations', 'Descriptions'])
 
@@ -33,8 +48,30 @@ def get_unique_modules(filepath=DLO_DIR +'Campus/',filename='student_export.xlsx
         codes = codes.append(temp.str[:8],ignore_index=True)
     codes.dropna(inplace=True)
     codes = codes.unique().tolist()
-    print(codes)
     return codes
+
+def module_students(module_code, filepath=DLO_DIR +'Campus/', filename='student_export.xlsx'):
+    """Calculate a summary of the support plan accommodations in a module"""
+
+    df_students = pd.read_excel(filepath+filename, sheet_name='Students')
+    df_students=df_students.dropna(subset=['Modules'])
+    df_students_module = df_students[df_students['Modules'].str.contains(module_code, case=False)]
+    df_students_module.to_excel(filepath + 'modules/' + module_code + '.xlsx', index=False)
+
+def module_accommodations_summary(module_code, filepath=DLO_DIR +'Campus/', filename='student_export.xlsx'):
+    df_module=pd.read_excel(filepath + 'modules/' + module_code +'.xlsx')
+    student_ids_support = df_module[df_module['Accommodations']=='Yes']['Student ID'].to_list()
+    print(student_ids_support)
+    df_accommodations = pd.read_excel(filepath+filename, sheet_name='Accommodations')
+    module_accommodations = df_accommodations[df_accommodations['Student ID'].isin(student_ids_support)]
+    split_accommodations = module_accommodations['Accommodation Type'].str.split(pat = ' - ',expand=True)
+    module_accommodations['Accommodation Code']= split_accommodations[0]
+    module_accommodations['Accommodation Type'] = split_accommodations[1]
+    print(module_accommodations)
+    print(module_accommodations.groupby('Accommodation Code').count())
+
+
+
 
 
 
@@ -46,19 +83,15 @@ def cf_with_examples(filepath=DLO_DIR +'Campus/', filename='accommodation_codes.
     df_accommodations.to_excel(filepath + filename, index=False)
 
 
-def read_campus(filepath=DLO_DIR +'Campus/', filename='student_export.xlsx'):
-    df_students = pd.read_excel(filepath+filename, sheet_name='Students')#,skiprows=[0])
-    print(df_students['Level'].head(n=20))
-    df_accommodations = pd.read_excel(filepath+filename,sheet_name='Accommodations')#,skiprows=[0])
-    df_accommodations = df_accommodations[df_accommodations['Programme Status'].str.contains('Active')]
-    get_unique_codes(df_accommodations)
 
 
 
 
 if __name__ == '__main__':
-    read_campus()
-    #get_unique_modules()
+    module='PHYS3009'
+    #module_students(module)
+    #module_accommodations_summary(module)
+    get_unique_accommodation_codes()
 
 
 

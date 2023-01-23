@@ -28,7 +28,7 @@ def process_extension():
 def process(filename):
     filetype = pathlib.Path(filename).suffix
     path, filename = os.path.split(filename)
-    
+
     if filetype == '.docx':
         manual = process_docx(filename=filename)
     else:
@@ -48,19 +48,22 @@ def process_docx(filename='test.docx', signature='signature.png', filepath = DLO
     manual=False
     doc = Document(filepath + 'Extensions_to_approve/' + filename)
 
-    try:
-        
+    if True:
+
         request = {
             'name':doc.tables[0].cell(0,1).text,
             'id': doc.tables[0].cell(1,1).text,
             'module': doc.tables[1].cell(1,0).text,
             'original_deadline' : parse_date(doc.tables[1].cell(1,2).text),
-            'new_deadline' : parse_date(doc.tables[1].cell(1,3).text),
             }
 
-        
-        request['date_diff'] = (request['new_deadline']-request['original_deadline']).days
+        if len(doc.tables[1].cell(1,3).text) > 1:
+            request['new_deadline'] : parse_date(doc.tables[1].cell(1,3).text)
+        else:
+            request['new_deadline'] = relative_datetime(request['original_deadline'],delta_day=7)
+            doc.tables[1].cell(1,3).paragraphs[0].text = format_datetime_to_str(request['new_deadline'],format="%d/%m/%Y")
 
+        request['date_diff'] = (request['new_deadline']-request['original_deadline']).days
 
         #Conditions :  if manual is still False after these the coursework can be automatically processed
         if (request['original_deadline'] -  datetime.datetime.now()).days < 0:
@@ -91,7 +94,7 @@ def process_docx(filename='test.docx', signature='signature.png', filepath = DLO
                 paragraph.add_run('Date:').bold = True
                 paragraph.add_run('..............' + today + '...................')
 
-
+        print(manual)
         if manual:
             #Move to folder for manual processing
             doc.save(filepath + 'Extensions_to_approve/manual/' + str(datetime.date.today().strftime("%Y_%m_%d")) + '_' + request['name'].replace(' ','') +'.docx')
@@ -99,11 +102,11 @@ def process_docx(filename='test.docx', signature='signature.png', filepath = DLO
             doc.save(filepath + 'Approved_extensions/' + str(datetime.date.today().strftime("%Y_%m_%d")) + '_' + request['name'].replace(' ','') +'.docx')
 
         return manual
-    except:
+    """except:
         #If it fails process it manually
         manual=True
         doc.save(filepath + 'Extensions_to_approve/manual/' + str(datetime.date.today().strftime("%Y_%m_%d")) + '_problem.docx')
-
+    """
 
 def store_files(file_list, filepath=DLO_DIR + 'Approved_extensions/'):
     for file in file_list:

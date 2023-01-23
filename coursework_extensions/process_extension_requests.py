@@ -2,6 +2,8 @@ import os, sys
 
 parent = os.path.abspath('.')
 sys.path.insert(1, parent)
+parent = os.path.abspath('..')
+sys.path.insert(1, parent)
 
 from filehandling import BatchProcess, get_directory_filenames
 from emails.auto_email import send_email

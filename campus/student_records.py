@@ -20,17 +20,23 @@ from addresses import DLO_DIR
 from custom_datatypes import StudentId, YearGroup
 
 
-def get_student_record(id=0,name=('',''), show=False, filepath=DLO_DIR +'Campus/',filename='student_export.xlsx'):# : StudentId=0, name=('', ''), print=False, ):
+def get_student_record(id=0,name=('',''), show=False, filepath=DLO_DIR +'Campus/',filename='student_export.xlsx'):
     df_students = pd.read_excel(filepath + filename, sheet_name='Students', usecols=['Student ID','Surname','First Name','Email','Level','Accommodations','Start Date','Expected End Date', 'Modules', 'Personal Tutor 1','Tutor 1 Email Address'])
     try:
         if id == 0:
             df_surname = df_students[df_students['Surname'].str.contains(name[1], case=False)]
             student = df_surname[df_surname['First Name'].str.contains(name[0], case=False)]
+            if np.shape(student)[0] > 1:
+                print('Multiple entries match:\n')
+                for id, firstname, surname in zip(student['Student ID'].to_list(), student['First Name'].to_list(),student['Surname'].to_list()):
+                    print(id, firstname, surname)
+                return None
             id = StudentId(student['Student ID'].iloc[0])
         else:
             id = StudentId(id)
     except:
-        print('Entry not found')
+        print('No entries found')
+        return None
 
     student = df_students[df_students['Student ID'] == id]
 
@@ -80,7 +86,6 @@ if __name__ == '__main__':
         elif ',' in entry:
             name = entry.strip().split(',')
             print(name)
-
             get_student_record(name=(name[0],name[1]), show=True)
         else:
             get_student_record(id=entry, show=True)
