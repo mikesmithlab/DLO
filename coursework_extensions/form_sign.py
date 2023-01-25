@@ -48,7 +48,7 @@ def process_docx(filename='test.docx', signature='signature.png', filepath = DLO
     manual=False
     doc = Document(filepath + 'Extensions_to_approve/' + filename)
 
-    if True:
+    try:
 
         request = {
             'name':doc.tables[0].cell(0,1).text,
@@ -58,7 +58,7 @@ def process_docx(filename='test.docx', signature='signature.png', filepath = DLO
             }
 
         if len(doc.tables[1].cell(1,3).text) > 1:
-            request['new_deadline'] : parse_date(doc.tables[1].cell(1,3).text)
+            request['new_deadline'] = parse_date(doc.tables[1].cell(1,3).text)
         else:
             request['new_deadline'] = relative_datetime(request['original_deadline'],delta_day=7)
             doc.tables[1].cell(1,3).paragraphs[0].text = format_datetime_to_str(request['new_deadline'],format="%d/%m/%Y")
@@ -69,7 +69,7 @@ def process_docx(filename='test.docx', signature='signature.png', filepath = DLO
         if (request['original_deadline'] -  datetime.datetime.now()).days < 0:
             #Asked for extension after original deadline
             manual=True
-        elif request['date_diff'] > 7:
+        elif request['date_diff'] >= 7:
             #Asked for longer than 7 days
             manual=True
         elif 'PHYS4' in request['module']:
@@ -94,19 +94,18 @@ def process_docx(filename='test.docx', signature='signature.png', filepath = DLO
                 paragraph.add_run('Date:').bold = True
                 paragraph.add_run('..............' + today + '...................')
 
-        print(manual)
-        if manual:
+                if manual:
             #Move to folder for manual processing
             doc.save(filepath + 'Extensions_to_approve/manual/' + str(datetime.date.today().strftime("%Y_%m_%d")) + '_' + request['name'].replace(' ','') +'.docx')
         else:
             doc.save(filepath + 'Approved_extensions/' + str(datetime.date.today().strftime("%Y_%m_%d")) + '_' + request['name'].replace(' ','') +'.docx')
 
         return manual
-    """except:
+    except:
         #If it fails process it manually
         manual=True
         doc.save(filepath + 'Extensions_to_approve/manual/' + str(datetime.date.today().strftime("%Y_%m_%d")) + '_problem.docx')
-    """
+
 
 def store_files(file_list, filepath=DLO_DIR + 'Approved_extensions/'):
     for file in file_list:
