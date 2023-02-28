@@ -1,14 +1,22 @@
 from custom_exceptions import StudentIdException, ModuleCodeException, YearGroupException
+from collections import UserDict
 import numpy as np
 
 class StudentId(int):
     """StudentID type which enforces possible value"""
     def __new__(cls, value):
+        print(value)
         if len(str(value)) != 8:
             raise StudentIdException
         if (str(value)[0] != '1') and (str(value)[0] != '2'):
             raise StudentIdException
         return int.__new__(cls, value)
+
+class StudentRecord(UserDict):
+    def __new__(cls):
+        return UserDict.__new__(cls)
+        
+
 
 
 class ModuleCode(str):
@@ -42,4 +50,9 @@ class YearGroup(str):
 
         return str.__new__(cls, value)
 
+
+if __name__ =='__main__':
+    bob = StudentRecord()
+    bob['test']=5
+    print(bob.keys())
 

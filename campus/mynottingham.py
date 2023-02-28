@@ -91,6 +91,10 @@ class Campus:
 
 
 if __name__ == '__main__':
+    from accommodations_summary import extract_exam_arrangements
+
     campus = Campus(DLO_DIR + 'login.json')
     campus.download_student_records()
     campus.close()
+    extract_exam_arrangements()
+

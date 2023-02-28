@@ -1,5 +1,4 @@
 from docx import Document
-import dateutil.parser
 import datetime
 import pathlib
 import shutil
@@ -66,9 +65,9 @@ def process_docx(filename='test.docx', signature='signature.png', filepath = DLO
 
         
         
-
+        print(request['original_deadline'])
         #Conditions :  if manual is still False after these the coursework can be automatically processed
-        if (request['original_deadline'] -  datetime.datetime.now()).days > 0:
+        if (request['original_deadline'] -  datetime.datetime.now()).days < -1:
             
             #Asked for extension after original deadline
             manual=True
@@ -116,7 +115,7 @@ def process_docx(filename='test.docx', signature='signature.png', filepath = DLO
         manual=True
         doc.save(filepath + 'Extensions_to_approve/manual/' + str(datetime.date.today().strftime("%Y_%m_%d")) + '_problem.docx')
         return manual
-    """
+    
 
 def store_files(file_list, filepath=DLO_DIR + 'Approved_extensions/'):
     for file in file_list:
