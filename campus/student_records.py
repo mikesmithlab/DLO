@@ -19,26 +19,47 @@ from addresses import DLO_DIR
 
 from custom_datatypes import StudentId, YearGroup, ModuleCode
 
+
+
+def get_support(df_support, filter='all'):
+
+    return accommodations
+
+
 class Module:
     def __init__(self, module_id, df_students=None, df_support=None):
         """Extract all students associated with a module"""
         self.module = df_students[df_students['Modules'].str.contains(module_id, case=False).fillna(False, inplace=False)]
-        self.num_students=np.shape(self.module)[0]
-        self.get_student_ids()
-        self.module_support=df_support[df_support['Student ID'].isin(self.student_info['id'])]
-        self.get_students()
-        
-    def get_student_ids(self):
         self.student_info = { 'id' :self.module['Student ID'].tolist()}
-
-    
-    def get_students(self):
-        self.students = []
-        for id in self.student_info['id']:
-            self.students.append(Student(id=id, df_students=self.module, df_support=self.module_support))
+        self.num_students = np.shape(self.module)[0]
+        self.module_support=df_support[df_support['Student ID'].isin(self.student_info['id'])]
+        self.get_module_info()
+        self.get_student_info()
+        self.get_accommodations()
         
+    def get_module_info(self):
+        self.module_info = {'convenor':'',
+                            'module_id':module_id,
+                            'num_students':self.num_students}
+    
+    def get_student_info(self):
         self.student_info['First Name'] = self.module['First Name'].tolist()
         self.student_info['Surname'] = self.module['Surname'].tolist()
+        self.student_info['Accommodations'] = self.module[]
+    
+    def get_accommodations(self, filter='all'):
+        """returns a dictionary of all adjustment codes and a list of student ids with that adjustment
+        
+        the adjustments can be filtered to include
+        'all', 'exam', 'teaching' 
+
+        'teaching' includes both assessment and teaching adjustments - ie things module convenors need to know about. These are codes beginning ASS or TCH
+        'exam' includes exam adjustments. Codes beginning EXM
+
+        """
+        return get_support(self.module_support, filter=filter)
+
+
         
             
     
@@ -49,11 +70,17 @@ class Module:
 
 
 class Student:
+
     def __init__(self, id=0, name=('',''), df_students=None, df_support=None):
         """Extract complete student record from downloaded version of campus   
 
         Supply either student id or name in format firstname,lastname. The firstname and lastname can be substrings
-        which are contained in the name. 
+        which are contained in the name. If more than one student matches it returns possible matches
+
+        A student has:
+        1. a record --> Info such as tutor, dates, year stored as dictionary
+        2. a list of modules --> Dictionary of Key, Values = Module code, Module description
+        3. support --> This is None if no support plan or a dictionary of the adjustments for that student
         """
         self.student=self._get_student(df_students, id=id, name=name)
 
@@ -123,10 +150,16 @@ class Student:
         pprint(self.modules)
         print('-----Accommodations-----')
         pprint(self.support)
+    
+    def export_student_record(self):
+        pd.DataFrame(self.record).to_excel(DLO_DIR + 'students/' + self.record['first name']+self.record['surname']+'_'+self.record['id']+'.xlsx')
 
 
 def load_campus(filepath=DLO_DIR +'Campus/', filename='student_export.xlsx'):
-    
+    """Loads the contents of the Campus download file into two dataframes
+    1. The students tab
+    2. The accommodations tab
+    """
     df_students = pd.read_excel(filepath + filename, sheet_name='Students', usecols=['Student ID','Surname','First Name','Email','Level','Accommodations','Start Date','Expected End Date', 'Modules', 'Personal Tutor 1','Tutor 1 Email Address'])
     df_support = pd.read_excel(filepath + filename, sheet_name='Accommodations', usecols=['Student ID','Surname','First Name','Email','Accommodation Type','Accommodation Description'])
     return df_students, df_support
