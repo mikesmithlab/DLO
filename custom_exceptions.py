@@ -12,3 +12,8 @@ class YearGroupException(Exception):
     def __init__(self):
         super().__init__()
         print('Year group not acceptable value')
+
+class AccommodationsFilterException(Exception):
+    def __init__(self) -> None:
+        super().__init__()
+        print("Filter in accommodations not valid. Must be 'all', 'exam' or 'teaching'")

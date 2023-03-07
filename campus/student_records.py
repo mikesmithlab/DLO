@@ -18,12 +18,11 @@ from addresses import DLO_DIR
 
 
 from custom_datatypes import StudentId, YearGroup, ModuleCode
+from custom_exceptions import AccommodationsFilterException
 
 
 
-def get_support(df_support, filter='all'):
 
-    return accommodations
 
 
 class Module:
@@ -32,6 +31,7 @@ class Module:
         self.module = df_students[df_students['Modules'].str.contains(module_id, case=False).fillna(False, inplace=False)]
         self.student_info = { 'id' :self.module['Student ID'].tolist()}
         self.num_students = np.shape(self.module)[0]
+        self.module_id = module_id
         self.module_support=df_support[df_support['Student ID'].isin(self.student_info['id'])]
         self.get_module_info()
         self.get_student_info()
@@ -39,13 +39,13 @@ class Module:
         
     def get_module_info(self):
         self.module_info = {'convenor':'',
-                            'module_id':module_id,
+                            'module_id':self.module_id,
                             'num_students':self.num_students}
     
     def get_student_info(self):
         self.student_info['First Name'] = self.module['First Name'].tolist()
         self.student_info['Surname'] = self.module['Surname'].tolist()
-        self.student_info['Accommodations'] = self.module[]
+        self.student_info['Accommodations'] = ''
     
     def get_accommodations(self, filter='all'):
         """returns a dictionary of all adjustment codes and a list of student ids with that adjustment
@@ -155,6 +155,33 @@ class Student:
         pd.DataFrame(self.record).to_excel(DLO_DIR + 'students/' + self.record['first name']+self.record['surname']+'_'+self.record['id']+'.xlsx')
 
 
+def get_support(df_support, filter='all'):
+    """get_support filters a dataframe by accommodations and returns a unique list of accommodation codes
+    
+        df_support a pandas dataframe containing a subset of the campus accommodations tab
+        filter - can be 'all','exam', 'teaching'
+        
+        'teaching' includes both assessment and teaching adjustments - ie things module convenors need to know about. These are codes beginning ASS or TCH
+        'exam' includes exam adjustments. Codes beginning EXM
+        'all' returns everything
+    """
+    if filter == 'exam':
+        df = df_support[df_support['Accommodation Type'].str.contains('EXM')]
+    elif filter == 'teaching':
+        df = df_support[df_support['Accommodation Type'].str.contains('TCH | ASS')]
+    elif filter == 'all':
+        df=df_support
+    else:
+        raise AccommodationsFilterException
+    
+    codes = df.groupby('Accommodation Type')    
+    unique_codes = [code[:6] for code in codes.groups.keys()]
+    count_students = [len(value) for value in codes.groups.values()]
+    support = {code : count for code, count in zip(unique_codes, count_students)}
+       
+    return support
+    
+
 def load_campus(filepath=DLO_DIR +'Campus/', filename='student_export.xlsx'):
     """Loads the contents of the Campus download file into two dataframes
     1. The students tab
@@ -169,6 +196,7 @@ if __name__ == '__main__':
     df_student, df_support = load_campus()
     
     fnf = Module('PHYS3009', df_students=df_student, df_support=df_support)
+    fnf.get_accommodations(filter='exam')
     """
     while True:
         entry = input("Type student id or name separated by comma. q to quit>")
