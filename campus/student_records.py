@@ -37,15 +37,21 @@ class Module:
         self.get_student_info()
         self.get_accommodations()
         
-    def get_module_info(self):
-        self.module_info = {'convenor':'',
+    def get_module_info(self, module_convenors_file = DLO_DIR + 'Campus/module_convenors.xlsx'):
+        convenors = pd.read_excel(module_convenors_file)
+        
+        module = convenors[convenors['Campus Code']==self.module_id]
+
+        self.module_info = {'convenor':module['Convenor'].values[0],
+                            'convenor_email': module['emails'].values[0],
                             'module_id':self.module_id,
+                            'module_title':module['Module Title'].values[0],
                             'num_students':self.num_students}
     
     def get_student_info(self):
         self.student_info['First Name'] = self.module['First Name'].tolist()
         self.student_info['Surname'] = self.module['Surname'].tolist()
-        self.student_info['Accommodations'] = ''
+        self.student_info['Accommodations'] = self.module['Accommodations'].to_list()
     
     def get_accommodations(self, filter='all'):
         """returns a dictionary of all adjustment codes and a list of student ids with that adjustment
@@ -57,16 +63,12 @@ class Module:
         'exam' includes exam adjustments. Codes beginning EXM
 
         """
-        return get_support(self.module_support, filter=filter)
-
-
-        
-            
+        self.support_info = get_support(self.module_support, filter=filter)
     
-    
-
-        
-
+    def export_module(self):
+        pd.DataFrame(self.student_info).to_excel(DLO_DIR + 'Campus/modules/' + self.module_id +'_studentinfo.xlsx', index=False)
+        pd.Series(self.module_info).to_excel(DLO_DIR + 'Campus/modules/' + self.module_id +'_moduleinfo.xlsx', header=False)
+        pd.Series(self.support_info).to_excel(DLO_DIR + 'Campus/modules/' + self.module_id +'_supportinfo.xlsx', header=False)
 
 
 class Student:
@@ -143,7 +145,7 @@ class Student:
             support = {accommodation.replace(' ','')[:6]: accommodation.replace(' ','')[6:] for accommodation in df_student_support['Accommodation Type'].to_list()}
         return support
 
-    def print_student_record(self):
+    def print_student(self):
         print('-----Student Details-----')
         pprint(self.record)
         print('-----Modules-----')
@@ -151,7 +153,7 @@ class Student:
         print('-----Accommodations-----')
         pprint(self.support)
     
-    def export_student_record(self):
+    def export_student(self):
         pd.DataFrame(self.record).to_excel(DLO_DIR + 'students/' + self.record['first name']+self.record['surname']+'_'+self.record['id']+'.xlsx')
 
 
@@ -195,9 +197,9 @@ def load_campus(filepath=DLO_DIR +'Campus/', filename='student_export.xlsx'):
 if __name__ == '__main__':
     df_student, df_support = load_campus()
     
-    fnf = Module('PHYS3009', df_students=df_student, df_support=df_support)
-    fnf.get_accommodations(filter='exam')
-    """
+    #fnf = Module('PHYS3009', df_students=df_student, df_support=df_support)
+    #fnf.export_module()
+    
     while True:
         entry = input("Type student id or name separated by comma. q to quit>")
         if entry == 'q':
@@ -208,7 +210,7 @@ if __name__ == '__main__':
             student=Student(name=(name[0],name[1]), df_students=df_student, df_support=df_support)
         else:
             student=Student(id=entry, df_students=df_student, df_support=df_support)
-        student.print_student_record()
+        student.print_student()
 
-    """
+    
 
