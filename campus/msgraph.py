@@ -6,7 +6,9 @@ import msal
 
 """Module to handle log in.
 
-Need to setup an app on Azure. Check scopes match app permissions.
+Need to setup an app on Azure (https://portal.azure.com/).
+Login uni username and passwd.
+Check scopes match app permissions.
 These youtube videos helped me understand what was going on!:
 https://www.youtube.com/watch?v=1Jyd7SA-0kI&t=1s --> Method 2
 https://www.youtube.com/watch?v=Ok8O_QnrSBI 
