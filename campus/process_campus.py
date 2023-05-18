@@ -15,11 +15,12 @@ from addresses import DLO_DIR
 
 
 def get_unique_accommodation_codes(filepath=DLO_DIR +'Campus/', filename='student_export.xlsx', codes_filename='Full list of Campus Accommodation Codes with Descriptions Dec 22.xlsx',output_filename='accommodation_codes.xlsx'):
-    """Create a new file of the accommodation codes present in campus and combine with descriptors"""
+    """
+    Create a new file of the accommodation codes present in campus and combine with descriptors
+    """
     df_accommodations = pd.read_excel(filepath+filename, sheet_name='Accommodations')
     df_accommodations = df_accommodations[df_accommodations['Programme Status'].str.contains('Active')]
     df_codesexplained =pd.read_excel(filepath+codes_filename, header=1)
-    print(df_codesexplained)
 
     accommodation_codes = df_accommodations['Accommodation Type'].str.split(pat=' - ', n=0,expand=True)
     accommodation_codes=accommodation_codes.drop_duplicates()
@@ -35,44 +36,26 @@ def get_unique_accommodation_codes(filepath=DLO_DIR +'Campus/', filename='studen
     accommodation_codes.sort_values(0)
     accommodation_codes.to_excel(filepath + output_filename, index=False, header=['Code', 'Explanations', 'Descriptions'])
 
-def get_unique_modules(filepath=DLO_DIR +'Campus/',filename='student_export.xlsx'):
-    """Extract all the unique module codes from the complete campus download"""
-    df_students = pd.read_excel(filepath + filename, header=0)
-    modules=df_students['Modules'].str.split(pat=';', n=0,expand=True)
-    num_columns = np.shape(modules)[1]
-
-    codes = modules[0].str.strip()
-    codes=codes.str[:8]
-    for col in range(1,num_columns):
-        temp=modules[col].str.strip()
-        codes = codes.append(temp.str[:8],ignore_index=True)
-    codes.dropna(inplace=True)
-    codes = codes.unique().tolist()
-    return codes
 
 def module_students(module_code, filepath=DLO_DIR +'Campus/', filename='student_export.xlsx'):
-    """Calculate a summary of the support plan accommodations in a module"""
-
+    """
+    Calculate a summary of the support plan accommodations in a module
+    The file contains a tab summarising module accommodations
+    """
     df_students = pd.read_excel(filepath+filename, sheet_name='Students')
     df_students=df_students.dropna(subset=['Modules'])
     df_students_module = df_students[df_students['Modules'].str.contains(module_code, case=False)]
-    df_students_module.to_excel(filepath + 'modules/' + module_code + '.xlsx', index=False)
 
-def module_accommodations_summary(module_code, filepath=DLO_DIR +'Campus/', filename='student_export.xlsx'):
-    df_module=pd.read_excel(filepath + 'modules/' + module_code +'.xlsx')
-    student_ids_support = df_module[df_module['Accommodations']=='Yes']['Student ID'].to_list()
-    print(student_ids_support)
+    student_ids_support = df_students_module[df_students_module['Accommodations']=='Yes']['Student ID'].to_list()
     df_accommodations = pd.read_excel(filepath+filename, sheet_name='Accommodations')
-    module_accommodations = df_accommodations[df_accommodations['Student ID'].isin(student_ids_support)]
-    split_accommodations = module_accommodations['Accommodation Type'].str.split(pat = ' - ',expand=True)
-    module_accommodations['Accommodation Code']= split_accommodations[0]
-    module_accommodations['Accommodation Type'] = split_accommodations[1]
-    print(module_accommodations)
-    print(module_accommodations.groupby('Accommodation Code').count())
+    df_module_accommodations = df_accommodations[df_accommodations['Student ID'].isin(student_ids_support)]
+    split_accommodations = df_module_accommodations['Accommodation Type'].str.split(pat = ' - ',expand=True)
+    df_module_accommodations['Accommodation Code']= split_accommodations[0]
+    df_module_accommodations['Accommodation Type'] = split_accommodations[1]
 
-
-
-
+    with pd.ExcelWriter(filepath + 'modules/' + module_code + '.xlsx', engine='openpyxl') as writer:
+        df_students_module.to_excel(writer, sheet_name='students', columns=['Student ID','Surname','First Name','Title','Email','Accommodations','Personal Tutor 1','Tutor 1 Email Address'],index=False)    
+        df_module_accommodations.to_excel(writer, sheet_name='accommodations', columns=['Student ID','Surname','First Name', 'Email', 'Accommodation Code','Accommodation Type','Accommodation Description'],index=False)
 
 
 
@@ -89,9 +72,8 @@ def cf_with_examples(filepath=DLO_DIR +'Campus/', filename='accommodation_codes.
 
 if __name__ == '__main__':
     module='PHYS3009'
-    #module_students(module)
-    #module_accommodations_summary(module)
-    get_unique_accommodation_codes()
+    module_students(module)
+    #get_unique_accommodation_codes()
 
 
 

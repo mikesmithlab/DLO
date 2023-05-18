@@ -1,74 +1,18 @@
-
-
 import os, sys
-
-
 # setting path
 parent = os.path.abspath('.')
 parent2 = os.path.abspath('..')
 sys.path.insert(1, parent)
 sys.path.insert(1,parent2)
 
-
 import pandas as pd
 import numpy as np
 from pprintpp import pprint
 
 from addresses import DLO_DIR
-
-
 from custom_datatypes import StudentId, YearGroup, ModuleCode
 from custom_exceptions import AccommodationsFilterException
-
-
-
-
-
-
-class Module:
-    def __init__(self, module_id, df_students=None, df_support=None):
-        """Extract all students associated with a module"""
-        self.module = df_students[df_students['Modules'].str.contains(module_id, case=False).fillna(False, inplace=False)]
-        self.student_info = { 'id' :self.module['Student ID'].tolist()}
-        self.num_students = np.shape(self.module)[0]
-        self.module_id = module_id
-        self.module_support=df_support[df_support['Student ID'].isin(self.student_info['id'])]
-        self.get_module_info()
-        self.get_student_info()
-        self.get_accommodations()
-        
-    def get_module_info(self, module_convenors_file = DLO_DIR + 'Campus/module_convenors.xlsx'):
-        convenors = pd.read_excel(module_convenors_file)
-        
-        module = convenors[convenors['Campus Code']==self.module_id]
-
-        self.module_info = {'convenor':module['Convenor'].values[0],
-                            'convenor_email': module['emails'].values[0],
-                            'module_id':self.module_id,
-                            'module_title':module['Module Title'].values[0],
-                            'num_students':self.num_students}
-    
-    def get_student_info(self):
-        self.student_info['First Name'] = self.module['First Name'].tolist()
-        self.student_info['Surname'] = self.module['Surname'].tolist()
-        self.student_info['Accommodations'] = self.module['Accommodations'].to_list()
-    
-    def get_accommodations(self, filter='all'):
-        """returns a dictionary of all adjustment codes and a list of student ids with that adjustment
-        
-        the adjustments can be filtered to include
-        'all', 'exam', 'teaching' 
-
-        'teaching' includes both assessment and teaching adjustments - ie things module convenors need to know about. These are codes beginning ASS or TCH
-        'exam' includes exam adjustments. Codes beginning EXM
-
-        """
-        self.support_info = get_support(self.module_support, filter=filter)
-    
-    def export_module(self):
-        pd.DataFrame(self.student_info).to_excel(DLO_DIR + 'Campus/modules/' + self.module_id +'_studentinfo.xlsx', index=False)
-        pd.Series(self.module_info).to_excel(DLO_DIR + 'Campus/modules/' + self.module_id +'_moduleinfo.xlsx', header=False)
-        pd.Series(self.support_info).to_excel(DLO_DIR + 'Campus/modules/' + self.module_id +'_supportinfo.xlsx', header=False)
+from mynottingham import load_campus
 
 
 class Student:
@@ -103,7 +47,8 @@ class Student:
             df_surname = df_students[df_students['Surname'].str.contains(name[1].replace(' ',''), case=False)]
             students = df_surname[df_surname['First Name'].str.contains(name[0].replace(' ',''), case=False)]
         else:
-            students = df_students[df_students['Student ID'] == id]
+            students = df_students[df_students['Student ID'] == int(id)]
+
         
         if students.empty:
             print('No entries found')
@@ -156,6 +101,13 @@ class Student:
     def export_student(self):
         pd.DataFrame(self.record).to_excel(DLO_DIR + 'students/' + self.record['first name']+self.record['surname']+'_'+self.record['id']+'.xlsx')
 
+def get_year(df_student, df_support, year=1):
+    """get_year returns the a dataframe of students and a dataframe of support accommodations filtered
+    by yeargroup."""
+    year_id = {1:'01',2:'02',3:'03',4:'04','pgt':'PGT','phd':'PGR'}
+    df_student_year = df_student[df_student['Level'] == year_id[year]]
+    df_support_year = df_support[df_support['Student ID'].isin(df_student_year['Student ID'])]
+    return df_student_year, df_support_year
 
 def get_support(df_support, filter='all'):
     """get_support filters a dataframe by accommodations and returns a unique list of accommodation codes
@@ -184,22 +136,12 @@ def get_support(df_support, filter='all'):
     return support
     
 
-def load_campus(filepath=DLO_DIR +'Campus/', filename='student_export.xlsx'):
-    """Loads the contents of the Campus download file into two dataframes
-    1. The students tab
-    2. The accommodations tab
-    """
-    df_students = pd.read_excel(filepath + filename, sheet_name='Students', usecols=['Student ID','Surname','First Name','Email','Level','Accommodations','Start Date','Expected End Date', 'Modules', 'Personal Tutor 1','Tutor 1 Email Address'])
-    df_support = pd.read_excel(filepath + filename, sheet_name='Accommodations', usecols=['Student ID','Surname','First Name','Email','Accommodation Type','Accommodation Description'])
-    return df_students, df_support
+
 
 
 if __name__ == '__main__':
     df_student, df_support = load_campus()
-    
-    #fnf = Module('PHYS3009', df_students=df_student, df_support=df_support)
-    #fnf.export_module()
-    
+
     while True:
         entry = input("Type student id or name separated by comma. q to quit>")
         if entry == 'q':

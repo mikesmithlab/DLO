@@ -11,22 +11,21 @@ from time import sleep
 import shutil
 import os
 import glob
-
+import pandas as pd
 
 import sys
 # setting path
 sys.path.append('..')
+sys.path.append('.')
 from addresses import DLO_DIR
 
 
 class Campus:
     """
     Campus class downloads the complete accessible student record from campus as a csv 
-    and stores it for further use.
+    and stores it for further use. It uses Selenium and Chrome Drivers.
     """
     def __init__(self, login_file):
-        #options = Options()
-        #options.binary_location = r'C:\Program Files\Mozilla Firefox\firefox.exe'
         self.driver = webdriver.Chrome()
         self.driver.get('https://campus.nottingham.ac.uk/psp/csprd/?cmd=login')
         self.driver.maximize_window()
@@ -89,6 +88,14 @@ class Campus:
     def close(self):
         self.driver.quit()
 
+def load_campus(filepath=DLO_DIR +'Campus/', filename='student_export.xlsx'):
+    """Loads the contents of the Campus download file into two dataframes
+    1. The students tab
+    2. The accommodations tab
+    """
+    df_students = pd.read_excel(filepath + filename, sheet_name='Students', usecols=['Student ID','Surname','First Name','Email','Level','Accommodations','Start Date','Expected End Date', 'Modules', 'Personal Tutor 1','Tutor 1 Email Address'])
+    df_support = pd.read_excel(filepath + filename, sheet_name='Accommodations', usecols=['Student ID','Surname','First Name','Email','Accommodation Type','Accommodation Description'])
+    return df_students, df_support
 
 if __name__ == '__main__':
     from accommodations_summary import extract_exam_arrangements
