@@ -63,9 +63,6 @@ def process_docx(filename='test.docx', signature='signature.png', filepath = DLO
 
         request['date_diff'] = (request['new_deadline']-request['original_deadline']).days
 
-        
-        
-        print(request['original_deadline'])
         #Conditions :  if manual is still False after these the coursework can be automatically processed
         if (request['original_deadline'] -  datetime.datetime.now()).days < -1:
             
@@ -74,7 +71,7 @@ def process_docx(filename='test.docx', signature='signature.png', filepath = DLO
             
             print('original')
             print(request)
-        elif request['date_diff'] > 7:
+        elif request['date_diff'] >= 8:
             #Asked for longer than 7 days
             manual=True
             print('date_diff')
