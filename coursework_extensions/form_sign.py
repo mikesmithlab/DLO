@@ -26,7 +26,7 @@ def process_extension():
 
 def process(filename):
     filetype = pathlib.Path(filename).suffix
-    path, filename = os.path.split(filename)
+    _, filename = os.path.split(filename)
 
     if filetype == '.docx':
         manual = process_docx(filename=filename)
@@ -116,7 +116,7 @@ def process_docx(filename='test.docx', signature='signature.png', filepath = DLO
 
 def store_files(file_list, filepath=DLO_DIR + 'Approved_extensions/'):
     for file in file_list:
-        path, filename = os.path.split(file)
+        _, filename = os.path.split(file)
         dir_name = filepath + filename.split('_')[0] + '_' + filename.split('_')[-1].split('.')[0]
         print(dir_name)
         if not os.path.exists(dir_name):

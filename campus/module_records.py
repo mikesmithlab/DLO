@@ -13,7 +13,7 @@ from addresses import DLO_DIR
 from custom_datatypes import StudentId, YearGroup, ModuleCode
 from custom_exceptions import AccommodationsFilterException
 from mynottingham import load_campus
-from student_records import get_support
+from student_records import get_support, Student
 
 
 class Module:
@@ -90,19 +90,11 @@ def get_unique_modules(filepath=DLO_DIR +'Campus/',filename='student_export.xlsx
     codes=codes.str[:8]
     for col in range(1,num_columns):
         temp=modules[col].str.strip()
-        codes = codes.append(temp.str[:8],ignore_index=True)
+        codes = pd.concat([codes,temp.str[:8]],ignore_index=True)
     codes.dropna(inplace=True)
     codes = codes.unique().tolist()
     return codes
 
 
-if __name__ == '__main__':
-    df_student, df_support = load_campus()
-    
-    module_codes = get_unique_modules()
-    module_codes = [code for code in module_codes if code[:4] =='PHYS']
 
-    for code in module_codes:
-        fnf = Module(code, df_students=df_student, df_support=df_support)
-        fnf.get_accommodations()
-        fnf.export_module()
+

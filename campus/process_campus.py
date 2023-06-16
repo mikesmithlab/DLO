@@ -14,6 +14,12 @@ sys.path.insert(1, parent)
 from addresses import DLO_DIR
 
 
+def do_module_check(student_id):
+    student = Student(student_id)
+    student.modules
+
+
+
 def get_unique_accommodation_codes(filepath=DLO_DIR +'Campus/', filename='student_export.xlsx', codes_filename='Full list of Campus Accommodation Codes with Descriptions Dec 22.xlsx',output_filename='accommodation_codes.xlsx'):
     """
     Create a new file of the accommodation codes present in campus and combine with descriptors
@@ -70,10 +76,7 @@ def cf_with_examples(filepath=DLO_DIR +'Campus/', filename='accommodation_codes.
 
 
 
-if __name__ == '__main__':
-    module='PHYS3009'
-    module_students(module)
-    #get_unique_accommodation_codes()
+
 
 
 

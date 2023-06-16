@@ -1,6 +1,5 @@
 from custom_exceptions import StudentIdException, ModuleCodeException, YearGroupException
 from collections import UserDict
-import numpy as np
 
 class StudentId(int):
     """StudentID type which enforces possible value"""
@@ -16,8 +15,6 @@ class StudentRecord(UserDict):
     def __new__(cls):
         return UserDict.__new__(cls)
         
-
-
 
 class ModuleCode(str):
     def __new__(cls, value):
@@ -39,14 +36,16 @@ class YearGroup(str):
         Years = ['01','02','03','04','PGT','PGR']
         
         if type(value) is not type(' '):
-            raise YearGroupException
+            print(value)
+            #raise YearGroupException
 
-        value=value.lstrip("0").upper()
+        value=str(value).lstrip("0").upper()
         if value.isnumeric():
             value = "0" + value
 
         if value not in Years:
-            raise YearGroupException
+            #raise YearGroupException
+            print(value)
 
         return str.__new__(cls, value)
 

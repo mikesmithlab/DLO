@@ -38,6 +38,7 @@ class Student:
             self.record=self._get_student_record()
             self.modules=self._get_student_modules()
             self.support=self._get_student_accommodations(df_support)
+            
         
 
     def _get_student(self, df_students, id=0, name=(" "," ")):
@@ -51,7 +52,8 @@ class Student:
 
         
         if students.empty:
-            print('No entries found')
+            print(id)
+            print('Not listed in campus')
             return None
         elif np.shape(students)[0] > 1:
             print('Multiple entries match:\n')
@@ -62,8 +64,7 @@ class Student:
             return students
         
     def _get_student_record(self):
-        
-        record = {
+        self.record = {
             'id':self.student['Student ID'].iloc[0],
             'first name': self.student['First Name'].iloc[0],
             'surname': self.student['Surname'].iloc[0],
@@ -74,7 +75,7 @@ class Student:
             'tutor': self.student['Personal Tutor 1'].iloc[0],
             'tutor email': self.student['Tutor 1 Email Address'].iloc[0]
             }
-        return record
+        return self.record
         
     def _get_student_modules(self):
         if self.student['Modules'].isna().any():

@@ -1,11 +1,5 @@
 
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.firefox.options import Options
 import json
 from time import sleep
 import shutil
@@ -17,6 +11,7 @@ import sys
 # setting path
 sys.path.append('..')
 sys.path.append('.')
+
 from addresses import DLO_DIR
 
 
@@ -54,7 +49,7 @@ class Campus:
             except:
                 sleep(1)
 
-    def download_student_records(self, timeout=20):
+    def download_student_records(self):
         #Open mystudents
         self._campus_wait_for_load('win0groupletPTNUI_LAND_REC_GROUPLET$0')
         #Open Disability associations
@@ -98,10 +93,7 @@ def load_campus(filepath=DLO_DIR +'Campus/', filename='student_export.xlsx'):
     return df_students, df_support
 
 if __name__ == '__main__':
-    from accommodations_summary import extract_exam_arrangements
-
     campus = Campus(DLO_DIR + 'login.json')
     campus.download_student_records()
     campus.close()
-    extract_exam_arrangements()
 
