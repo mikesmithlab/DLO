@@ -41,7 +41,7 @@ def modules_check():
             if student.student is None:
                 #Student not listed on campus
                 modules_check.loc[tutee,:] = ['Not Listed','Not Listed',' ',' ']
-                no_modules_or_not_listed.loc[tutee, :] = ['First Name','Surname','Modules','Credits']
+                #no_modules_or_not_listed.loc[tutee, :] = ['First Name','Surname','Modules','Credits']
             else:
                 if student.modules is None:
                     #No modules listed
@@ -63,11 +63,8 @@ def modules_check():
             os.mkdir(tutor_group_folder)
         modules_check.to_excel(tutor_group_folder + '/modules_check.xlsx')
 
-
-
-if __name__ == '__main__':
-    
-    """Setup OAUTH2 protocol login"""
+def setup_tutor_permissions():
+     """Setup OAUTH2 protocol login"""
     #APPLICATION_ID='a4bcc85f-0755-44e4-9d8a-116d46e8ec67'
     #Scopes must match app permissions on https://portal.azure.com/
     #App is called Python Graph API
@@ -79,30 +76,11 @@ if __name__ == '__main__':
     #headers = {
     #    'Authorization':'Bearer ' + access_token['access_token']
     #}
+    print('not implemented yet')
 
-    root_folder_path = 'root:/Documents/DLO/Campus/modules/'
+if __name__ == '__main__':
     
-    link= 'https://uniofnottm-my.sharepoint.com/:f:/r/personal/mike_i_smith_nottingham_ac_uk/Documents/Documents/DLO/Campus/modules/PHYS3009?csf=1&web=1&e=TviwPp'
-    
-
-
+   
+  
     modules_check()
-
-
-    
-    """tutor_groups = 
-
-    #temp
-    module_codes = ['PHYS3009']
-
-    for code in module_codes:
-        module = mr.Module(code, df_students=df_student, df_support=df_support)
-        module.get_accommodations()
-        module.export_module()
-        convenor = module.module_info['convenor']
-        convenor_email = module.module_info['convenor_email']
-        folder_path=root_folder_path + code + '/'
-        #onedrive.share_folder(folder_path, convenor_email)
-        #link = onedrive.create_share_link(folder_path,[convenor_email])
-        send_email(message(convenor, convenor_email, code, link))
-    """
+    setup_module_permissions()

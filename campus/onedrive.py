@@ -6,10 +6,16 @@ import requests
 import json
 import base64
 from typing import List
+import sys
+import os
+sys.path.append(os.environ['USERPROFILE'] + '/OneDrive - The University of Nottingham/Documents/Programming/DLO/')
+from addresses import CREDENTIALS_DIR
 
 
 def upload_file(local_file_path, onedrive_folder, onedrive_file_name):
-    """Upload a file to Onedrive
+    """Upload a file to Onedrive. 
+    
+    Usually simpler to do this first on computer and then wait for sync.
 
     Docs for api : https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_put_content?view=odsp-graph-online
 
@@ -35,7 +41,9 @@ def upload_file(local_file_path, onedrive_folder, onedrive_file_name):
     return response
 
 
-def create_share_link(folder_path, emails, link_type='view'):
+def create_share_link(folder_path, emails : List[str, str], link_type='view'):
+    """ Creates a share link for a particular folder path and adds read permission
+    for the users indicated by emails."""
     folder_id = get_folder_id(folder_path)   
     
     request = {
@@ -97,7 +105,7 @@ def remove_permission(folder_path, emails : List[str]):
 
     return response 
 
-def add_permission(share_id, emails : List[str]):
+def add_permission(share_id, emails : List[str, str]):
     """Grant permission to user to use link
 
     Docs - https://learn.microsoft.com/en-us/graph/api/permission-grant?view=graph-rest-1.0&tabs=http
@@ -141,11 +149,10 @@ def get_folder_id(onedrive_filepath):
    
     return response.json()['id']
 
-
-
-if __name__ == '__main__':
+def session_login():
+    with open(CREDENTIALS_DIR + 'onedrive_api_key.json') as f:
+        APPLICATION_ID = json.load(f)['API_KEY']
     
-    APPLICATION_ID='a4bcc85f-0755-44e4-9d8a-116d46e8ec67'
     #Scopes must match app permissions on https://portal.azure.com/
     #App is called Python Graph API
     SCOPES = ['Files.ReadWrite']#User.Read','User.Export.All'].
@@ -155,13 +162,18 @@ if __name__ == '__main__':
 
     headers = {
         'Authorization':'Bearer ' + access_token['access_token']
-    }
-
+        }
+    
+    return headers
+    
+if __name__ == '__main__':
+    session_login()
+    
     folder_path = 'root:/Documents/DLO/Campus/modules/test'
     #get_folder_id(folder_path)
     response=list_permission(folder_path)
-    print(response.json()['value'][0]['grantedToIdentitiesV2'][0]['user']['email'])#['grantedToIdentitiesV2'])#[0]['displayName'])
-    #share_folder(folder_path, 'michael.swift@nottingham.ac.uk')
+    print(response.json()['value'][0]['grantedToIdentitiesV2'][0]['user']['email'])
+    
     link = create_share_link(folder_path,['michael.swift@nottingham.ac.uk'])
-    #print(link)
+    print(link)
 

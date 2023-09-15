@@ -11,9 +11,11 @@ Login uni username and passwd.
 Check scopes match app permissions.
 These youtube videos helped me understand what was going on!:
 https://www.youtube.com/watch?v=1Jyd7SA-0kI&t=1s --> Method 2
-https://www.youtube.com/watch?v=Ok8O_QnrSBI 
+https://www.youtube.com/watch?v=Ok8O_QnrSBI.
 
-made it understandable.
+I am using the session token login which is Method 2.
+
+This made it understandable.
 
 """
 
@@ -41,8 +43,10 @@ def generate_access_token(app_id, scopes):
         # load the session
         token_response = client.acquire_token_silent(scopes, accounts[0])
     else:
-        # authetnicate your accoutn as usual
+        # authenticate your account as usual
         flow = client.initiate_device_flow(scopes=scopes)
+        
+        # This prints a code in the terminal which you copy to the browser.
         print('user_code: ' + flow['user_code'])
         webbrowser.open('https://microsoft.com/devicelogin')
         token_response = client.acquire_token_by_device_flow(flow)

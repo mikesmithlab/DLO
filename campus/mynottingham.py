@@ -12,7 +12,7 @@ import sys
 sys.path.append('..')
 sys.path.append('.')
 
-from addresses import DLO_DIR
+from addresses import DLO_DIR, CREDENTIALS_DIR
 
 
 class Campus:
@@ -93,7 +93,7 @@ def load_campus(filepath=DLO_DIR +'Campus/', filename='student_export.xlsx'):
     return df_students, df_support
 
 if __name__ == '__main__':
-    campus = Campus(DLO_DIR + 'login.json')
+    campus = Campus(CREDENTIALS_DIR + 'campus_login.json')
     campus.download_student_records()
     campus.close()
 
