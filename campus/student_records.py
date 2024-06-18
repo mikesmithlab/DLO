@@ -45,6 +45,7 @@ class Student:
         #If name given check for matches. Either return record or possible names that match.
         #Entry from database stored in self.student
         if id==0:
+            
             df_surname = df_students[df_students['Surname'].str.contains(name[1].replace(' ',''), case=False)]
             students = df_surname[df_surname['First Name'].str.contains(name[0].replace(' ',''), case=False)]
         else:
@@ -149,7 +150,6 @@ if __name__ == '__main__':
             break
         elif ',' in entry:
             name = entry.split(',')
-            print(name)
             student=Student(name=(name[0],name[1]), df_students=df_student, df_support=df_support)
         else:
             student=Student(id=entry, df_students=df_student, df_support=df_support)

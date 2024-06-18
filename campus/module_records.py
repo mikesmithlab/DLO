@@ -29,19 +29,21 @@ class Module:
         if ~self.module_support.empty:
             self.get_accommodations()
         
-    def get_module_info(self, module_convenors_file = DLO_DIR + 'Campus/source_files/module_convenors.xlsx'):
+    def get_module_info(self, module_convenors_file = DLO_DIR + 'Campus/source_files/2324/convenors_2324.xlsx'):
         convenors = pd.read_excel(module_convenors_file)
         module = convenors[convenors['Campus Code']==self.module_id]
-        self.module_info = {'convenor':module['Convenor'].values[0],
-                            'convenor_email': module['emails'].values[0],
+        self.module_info = {'convenor':module['Convenor'].values,
+                            'convenor_email': module['Email'].values,
+                            'convenor_name': module['Name'].values,
                             'module_id':self.module_id,
-                            'module_title':module['Module Title'].values[0],
+                            'module_title':module['Module Title'].values,
                             'num_students':self.num_students}
     
     def get_student_info(self):
         self.student_info['First Name'] = self.module['First Name'].tolist()
         self.student_info['Surname'] = self.module['Surname'].tolist()
         self.student_info['Accommodations'] = self.module['Accommodations'].to_list()
+        
     
     def get_accommodations(self, filter='all', meaning=DLO_DIR + 'campus/source_files/campus_accommodation_codes_with_descriptions.xlsx'):
         """returns a dataframe of all adjustment codes and a list of student ids with an explanation of adjustment.
@@ -68,8 +70,18 @@ class Module:
             explanations = explanations.set_index('Code')
             self.module_support['Code']=temp[0]
             self.module_support=self.module_support.set_index('Code')
-            
+         
             self.module_support=self.module_support.merge(explanations, left_index=True,right_index=True, how='left')
+            
+            if 'Examples_x' in self.module_support.columns:
+                self.module_support['Examples'] = self.module_support['Examples_x']
+                self.module_support['Long Description'] = self.module_support['Long Description_x']
+                self.module_support.pop('Examples_x')
+                self.module_support.pop('Long Description_x')
+                self.module_support.pop('Examples_y')
+                self.module_support.pop('Long Description_y')
+            
+            self.module_support = self.module_support.sort_values(['Surname','First Name'])
             return self.module_support
     
     def export_module(self):

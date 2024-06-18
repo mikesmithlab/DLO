@@ -14,12 +14,14 @@ from emails.auto_email import send_email
 import pandas as pd
 
 
-def message (tutor, email, modulecode, link):
+def message (name, email, modulecode, link):
     return  {
                         'to'        : email,
                         'subject'   : f'Accommodations summary for module {modulecode}',
-                        'body'      : f'Dear {tutor}, \n\nthe shared folder below contains information specific to your tutor group. \n\n' + link + '\n\n' + 'This folder contains two spreadsheets. \n\nThe first spreadsheet lists the modules and associated points of each tutee as currently held on campus. Please check these with your tutees and let Ben McKirgan know if they are inaccurate (ben.mckirgan@nottingham.ac.uk). \n\n The second spreadsheet contains a helpful summary of the students in your tutor group. It summarises the support plan needs both in teaching and assessment. Please note this information is updated regularly with changes to campus and additional notes.\n\nIf through your engagement with them, you believe your tutees might have needs not covered by the support plan info recorded then please raise this with Mike Smith (DLO) and / or Frazer Pearce (Senior Tutor)\n\n We have also included a quick guide to the support available for your tutees, with links to the key contacts and info. \n\n kind regards\n\nMike Smith'
+                        'body'      : f'Dear {name}, \n\nthe shared folder below contains information specific to your module {modulecode}. \n\n' + link + '\n\n' + 'This folder provides a spreadsheet with a helpful summary of the students in your module. The first page tells you whether or not they have a support plan. The second page expands on what support needs / adjustments are included in their support plan. Codes beginning TCH affect teaching and codes beginning EXM affect assessment. A (sometimes helpful) description of what this means is also provided.\n\n This spreadsheet is dynamically updated each week from Campus and so hopefully makes it easy for you to see and plan for the students in your module. The information is only as accurate as Campus (groan...) which means students will only appear as and when they are correctly registered,  but hopefully it makes life a bit easier for you. \n\n If you have others who are involved in your module you would like this summary shared with please let me know as the permissions to this information are restricted and so the link will not work. \n\n kind regards \n\n Mike' 
                     }
+
+
 
 def modules_check():
     """Pulls the info currently on campus and a file listing which students are in which tutor groups
@@ -28,13 +30,14 @@ def modules_check():
 
     df_students, df_support = campus.load_campus()
     
-    tutor_groups = pd.read_excel(DLO_DIR + 'Campus/source_files/Tutor_List.xlsx').groupby('Tutor 2223')
-    df_modules = pd.read_excel(DLO_DIR + 'Campus/source_files/module_convenors.xlsx', usecols = ['Campus Code', 'Credits'])
+    tutor_groups = pd.read_excel(DLO_DIR + 'Campus/source_files/2324/Tutor_List.xlsx').groupby('Tutor 2223')
+    df_modules = pd.read_excel(DLO_DIR + 'Campus/source_files/2324/convenors_2324.xlsx', usecols = ['Campus Code', 'Credits'])
     module_credits = dict(zip(df_modules['Campus Code'].tolist(), df_modules['Credits'].tolist()))
 
     for tutor_group in tutor_groups:
         tutees = tutor_group[1]['Student Id'].tolist()
         modules_check = pd.DataFrame(index=tutees, columns=['First Name','Surname','Modules','Credits'])
+
         for tutee in tutees:
             tutee_module_credits = []
             student = sr.Student(id=tutee, df_students=df_students, df_support=df_support)
@@ -64,7 +67,7 @@ def modules_check():
         modules_check.to_excel(tutor_group_folder + '/modules_check.xlsx')
 
 def setup_tutor_permissions():
-     """Setup OAUTH2 protocol login"""
+    """Setup OAUTH2 protocol login"""
     #APPLICATION_ID='a4bcc85f-0755-44e4-9d8a-116d46e8ec67'
     #Scopes must match app permissions on https://portal.azure.com/
     #App is called Python Graph API
@@ -78,9 +81,24 @@ def setup_tutor_permissions():
     #}
     print('not implemented yet')
 
-if __name__ == '__main__':
+def check_student_list_in_campus(df):
+    df_students, _ = campus.load_campus()
+    try:
+        student_ids = df['Student ID'].tolist()
+    except:
+        student_ids = df['Student Id'].tolist()
+    flag=False
+    for id in student_ids:
+        if id not in student_ids:
+            print(f'{id} not in campus')
+            flag = True
+    print(flag)
     
+
+if __name__ == '__main__':
+    #df = pd.read_excel(DLO_DIR + 'Campus/source_files/2324/PHYS3009ClassList.xlsx')
+    #check_student_list_in_campus(df)
    
   
-    modules_check()
-    setup_module_permissions()
+    check_student_modules()
+    #setup_module_permissions()

@@ -12,45 +12,16 @@ sys.path.append(os.environ['USERPROFILE'] + '/OneDrive - The University of Notti
 from addresses import CREDENTIALS_DIR
 
 
-def upload_file(local_file_path, onedrive_folder, onedrive_file_name):
-    """Upload a file to Onedrive. 
-    
-    Usually simpler to do this first on computer and then wait for sync.
-
-    Docs for api : https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_put_content?view=odsp-graph-online
-
-    Parameters
-    ----------
-    local_file_path : Filepath to file to be uploaded
-    onedrive_folder : Where to store file in onedrive
-    file_name : new name of file to be stored in onedrive   
-
-    Returns
-    -------
-    response
-    (https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_put_content?view=odsp-graph-online)
-    """
-    with open(local_file_path, 'rb') as upload:
-        media_content = upload.read()
-
-    response=requests.put(
-        GRAPH_API_ENDPOINT + '/me/drive/items/'+onedrive_folder+f'{onedrive_file_name}:/content',
-        headers=headers,
-        data=media_content
-    )
-    return response
-
-
-def create_share_link(folder_path, emails : List[str, str], link_type='view'):
+def create_share_link(folder_path, emails : List, headers, link_type='view', ):
     """ Creates a share link for a particular folder path and adds read permission
     for the users indicated by emails."""
-    folder_id = get_folder_id(folder_path)   
+    folder_id = get_folder_id(folder_path, headers)   
     
     request = {
         "type": link_type,
         "scope": "organization",
         }
-
+    
     response=requests.post(
         GRAPH_API_ENDPOINT + '/me/drive/items/' + folder_id + '/createLink',
         headers=headers,
@@ -59,11 +30,11 @@ def create_share_link(folder_path, emails : List[str, str], link_type='view'):
     
     share_link = response.json()['link']['webUrl']
     share_id = response.json()['shareId']
-    add_permission(share_id, emails)
+    add_permission(share_id, emails, headers)
 
     return share_link
 
-def list_permission(folder_path):   
+def list_permission(folder_path, headers):   
     """Lists current permissions for a particular folder path.
 
     Parameters
@@ -77,12 +48,12 @@ def list_permission(folder_path):
         _description_
     """
     response=requests.get(
-        GRAPH_API_ENDPOINT + '/me/drive/items/' + folder_id + ':/permissions',
+        GRAPH_API_ENDPOINT + '/me/drive/items/' + get_folder_id(folder_path) + ':/permissions',
         headers=headers,
     )
     return response
     
-def remove_permission(folder_path, emails : List[str]):
+def remove_permission(folder_path, emails : List[str], headers):
     """Remove permission to user to use link
 
     Docs - https://learn.microsoft.com/en-us/graph/api/permission-grant?view=graph-rest-1.0&tabs=http
@@ -96,7 +67,7 @@ def remove_permission(folder_path, emails : List[str]):
     """
     recipients = [{"email":email} for email in emails]
 
-    folder_id = get_folder_id(folder_path)
+    folder_id = get_folder_id(folder_path, headers)
 
     response=requests.delete(
         GRAPH_API_ENDPOINT + '/me/drive/items/' + folder_id + '/permissions/grant',
@@ -105,7 +76,7 @@ def remove_permission(folder_path, emails : List[str]):
 
     return response 
 
-def add_permission(share_id, emails : List[str, str]):
+def add_permission(share_id, emails : List, headers):
     """Grant permission to user to use link
 
     Docs - https://learn.microsoft.com/en-us/graph/api/permission-grant?view=graph-rest-1.0&tabs=http
@@ -124,6 +95,8 @@ def add_permission(share_id, emails : List[str, str]):
         "roles": ["read"],
         }
 
+    
+
     response=requests.post(
         GRAPH_API_ENDPOINT + '/shares/' + share_id + '/permission/grant',
         headers=headers,
@@ -132,7 +105,7 @@ def add_permission(share_id, emails : List[str, str]):
 
     return response
 
-def get_folder_id(onedrive_filepath):
+def get_folder_id(onedrive_filepath, headers):
     """Get the id of a folder in onedrive from its path
     
     Docs for api : https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_get?view=odsp-graph-online
@@ -149,13 +122,14 @@ def get_folder_id(onedrive_filepath):
    
     return response.json()['id']
 
+
 def session_login():
     with open(CREDENTIALS_DIR + 'onedrive_api_key.json') as f:
         APPLICATION_ID = json.load(f)['API_KEY']
     
     #Scopes must match app permissions on https://portal.azure.com/
     #App is called Python Graph API
-    SCOPES = ['Files.ReadWrite']#User.Read','User.Export.All'].
+    SCOPES = ['Files.ReadWrite']
 
     #Verify identiry
     access_token = generate_access_token(APPLICATION_ID, SCOPES)
@@ -165,15 +139,17 @@ def session_login():
         }
     
     return headers
+
     
 if __name__ == '__main__':
-    session_login()
-    
-    folder_path = 'root:/Documents/DLO/Campus/modules/test'
+    headers = session_login()
+    print(headers)
+    folder_path = 'root:/Documents/DLO/Campus/modules/PHYS4007'
     #get_folder_id(folder_path)
-    response=list_permission(folder_path)
-    print(response.json()['value'][0]['grantedToIdentitiesV2'][0]['user']['email'])
+    #response=list_permission(folder_path)
+    #print(response.json())
+    #print(response.json()['value'][0]['grantedToIdentitiesV2'][0]['user']['email'])
     
-    link = create_share_link(folder_path,['michael.swift@nottingham.ac.uk'])
+    link = create_share_link(folder_path,['ppzmrs@exmail.nottingham.ac.uk'], headers)
     print(link)
 

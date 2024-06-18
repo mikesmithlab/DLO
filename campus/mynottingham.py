@@ -12,7 +12,7 @@ import sys
 sys.path.append('..')
 sys.path.append('.')
 
-from addresses import DLO_DIR, CREDENTIALS_DIR
+from addresses import DLO_DIR, CREDENTIALS_DIR, CHROME_DRIVER, CHROME_BROWSER
 
 
 class Campus:
@@ -21,7 +21,9 @@ class Campus:
     and stores it for further use. It uses Selenium and Chrome Drivers.
     """
     def __init__(self, login_file):
-        self.driver = webdriver.Chrome()
+        options = webdriver.ChromeOptions()
+        options.binary_location = CHROME_BROWSER
+        self.driver = webdriver.Chrome(executable_path=CHROME_DRIVER, options=options)
         self.driver.get('https://campus.nottingham.ac.uk/psp/csprd/?cmd=login')
         self.driver.maximize_window()
         with open(login_file) as f:
@@ -51,7 +53,7 @@ class Campus:
 
     def download_student_records(self):
         #Open mystudents
-        self._campus_wait_for_load('win0groupletPTNUI_LAND_REC_GROUPLET$0')
+        self._campus_wait_for_load('win0groupletPTNUI_LAND_REC_GROUPLET$1')
         #Open Disability associations
         self._campus_wait_for_load("UN_ACAD_STD_H_DESCR60$span$1")
         #Select all checkbox
@@ -65,6 +67,7 @@ class Campus:
         #Put file somewhere sensible
         print('Downloaded')
         self._move_downloaded_file()
+        sleep(10)
 
 
     def _move_downloaded_file(self):
@@ -88,8 +91,8 @@ def load_campus(filepath=DLO_DIR +'Campus/', filename='student_export.xlsx'):
     1. The students tab
     2. The accommodations tab
     """
-    df_students = pd.read_excel(filepath + filename, sheet_name='Students', usecols=['Student ID','Surname','First Name','Email','Level','Accommodations','Start Date','Expected End Date', 'Modules', 'Personal Tutor 1','Tutor 1 Email Address'])
-    df_support = pd.read_excel(filepath + filename, sheet_name='Accommodations', usecols=['Student ID','Surname','First Name','Email','Accommodation Type','Accommodation Description'])
+    df_students = pd.read_excel(filepath + filename, sheet_name='Students', usecols=['Student ID','Surname','First Name','Email','Level','Accommodations','Start Date','Expected End Date', 'Modules', 'Personal Tutor 1','Tutor 1 Email Address'], keep_default_na=False)
+    df_support = pd.read_excel(filepath + filename, sheet_name='Accommodations', usecols=['Student ID','Surname','First Name','Email','Accommodation Type','Accommodation Description'], keep_default_na=False)
     return df_students, df_support
 
 if __name__ == '__main__':

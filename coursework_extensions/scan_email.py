@@ -23,13 +23,18 @@ def scan_recent_email(filepath=None):
     
     filter = {'start': relative_datetime(now(),delta_day=-14),
               'stop':relative_datetime(now(),delta_day=1),
-              'has_attachments':True}   
+              'subject':'Science CERF outcome - SCICERF'
+              }   
 
+    output_msgs =[]
     for email in email_addresses:
         filter['from_email'] = email
         msgs = auto_email.get_emails(outlook, filter=filter)
-        auto_email.download_attachments(msgs, filepath, filter_out=('.jpg','.png'), change_filename=True)
-        auto_email.move_emails(outlook, msgs, folder=('Inbox','DLO','coursework_extensions'))
+        output_msgs.append(msgs)
+        #auto_email.download_attachments(msgs, filepath, filter_out=('.jpg','.png'), change_filename=True)
+        #auto_email.move_emails(outlook, msgs, folder=('Inbox','DLO','coursework_extensions'))
+    return output_msgs
+
 
 def clean_email():
     #Ridding inbox of all the support plan notifications
